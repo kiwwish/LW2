@@ -89,10 +89,10 @@ def sub_txt(T1: str, T2: str) -> str:
 
     return out
 
-print("add_s('Я', 'Ж') =", add_s('Я', 'Ж'))  # Е
-print("sub_s('Е', 'Ж') =", sub_s('Е', 'Ж'))  # Я
+def text2array(text: str) -> list:
+    """Текст → массив чисел"""
+    return [sym2num(ch) for ch in text]
 
-T1 = "ЕЖИК"
-T2 = "В_ТУМАНЕ"
-print(f"add_txt('{T1}', '{T2}') =", add_txt(T1, T2))
-print(f"sub_txt('{T1}', '{T2}') =", sub_txt(T1, T2))
+def array2text(arr: list) -> str:
+    """Массив чисел → текст"""
+    return ''.join(num2sym(num) for num in arr)

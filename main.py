@@ -1,3 +1,4 @@
+# main.py
 import sys
 import os
 
@@ -12,6 +13,5 @@ try:
         main()
 except ImportError as e:
     print(f"Ошибка импорта: {e}")
-    print("Убедитесь, что папка 'src' существует и содержит:")
-    print("  alphabet.py, trithemus.py, gui.py")
+    print("Убедитесь, что папка 'src' существует и содержит все файлы.")
     input("Нажмите Enter для выхода...")
