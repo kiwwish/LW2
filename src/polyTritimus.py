@@ -1,6 +1,5 @@
 # polyalphabetic.py
-from alphabet import sym2num, num2sym, text2array, array2text
-from tritimus import TrithemusCipher
+from alphabet import sym2num, num2sym, text2array
 
 
 def Thrithemus_table(KEY_IN: str) -> str:
@@ -110,3 +109,33 @@ class PolyalphabeticTrithemus:
             key_table = shift_Trithemus(key_table, num2sym(self.key_array[k]), b)
 
         return out
+
+
+# В конец polyalphabetic.py добавить:
+
+class STrithemus:
+    """Класс для S-блоков шифра Тритемуса"""
+
+    @staticmethod
+    def encrypt_block(block: str, key: str) -> str:
+        """Шифрование одного блока (4 символа)"""
+        if len(block) != 4:
+            return "input_error"
+        if len(key) != 16:
+            return "input_error"
+
+        # Используем полиалфавитный шифр
+        cipher = PolyalphabeticTrithemus(key)
+        return cipher.encrypt(block)
+
+    @staticmethod
+    def decrypt_block(block: str, key: str) -> str:
+        """Дешифрование одного блока (4 символа)"""
+        if len(block) != 4:
+            return "input_error"
+        if len(key) != 16:
+            return "input_error"
+
+        # Используем полиалфавитный шифр
+        cipher = PolyalphabeticTrithemus(key)
+        return cipher.decrypt(block)

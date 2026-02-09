@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
 from tritimus import TrithemusCipher
-from polyTritimus import PolyalphabeticTrithemus
+from polyTritimus import PolyalphabeticTrithemus, STrithemus
 
 
 class CipherApp:
@@ -24,6 +24,11 @@ class CipherApp:
         self.frame_poly = ttk.Frame(self.notebook)
         self.notebook.add(self.frame_poly, text='Полиалфавитный шифр Тритемуса')
         self.setup_poly_tab()
+
+        # Вкладка 3: S-блоки
+        self.frame_sblock = ttk.Frame(self.notebook)
+        self.notebook.add(self.frame_sblock, text='S-блоки Тритемуса')
+        self.setup_sblock_tab()
 
     def setup_simple_tab(self):
         """Настройка вкладки простого шифра Тритемуса"""
@@ -120,6 +125,49 @@ class CipherApp:
         ttk.Label(frame_decrypt, text="Результат:").grid(row=3, column=0, sticky='w', pady=5)
         self.poly_result_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=5, width=70)
         self.poly_result_decrypt.grid(row=3, column=1, padx=5, pady=5)
+
+    def setup_sblock_tab(self):
+        """Настройка вкладки S-блоков"""
+        # Информационная панель
+        frame_info = ttk.LabelFrame(self.frame_sblock, text="Информация", padding=10)
+        frame_info.pack(fill='x', padx=10, pady=(10, 5))
+
+        info_text = "S-блоки используют полиалфавитный шифр с фиксированными размерами:\n" \
+                    "• Размер блока: 4 символа\n" \
+                    "• Длина ключа: 16 символов"
+
+        ttk.Label(frame_info, text=info_text, wraplength=800, justify='left').pack(padx=5, pady=5)
+
+        # Область для ключа
+        frame_key = ttk.LabelFrame(self.frame_sblock, text="Ключ", padding=10)
+        frame_key.pack(fill='x', padx=10, pady=5)
+
+        ttk.Label(frame_key, text="Ключ (16 символов):").grid(row=0, column=0, sticky='w', pady=5)
+        self.sblock_key_entry = ttk.Entry(frame_key, width=50)
+        self.sblock_key_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        ttk.Label(frame_key, text="Длина:").grid(row=0, column=2, padx=5, pady=5)
+        self.sblock_key_len_label = ttk.Label(frame_key, text="0", width=5)
+        self.sblock_key_len_label.grid(row=0, column=3, padx=5, pady=5)
+
+        # Обновляем длину при вводе
+        self.sblock_key_entry.bind('<KeyRelease>', self.update_sblock_key_len)
+
+        # Область для тестового блока
+        frame_test = ttk.LabelFrame(self.frame_sblock, text="Тестирование блока", padding=10)
+        frame_test.pack(fill='x', padx=10, pady=5)
+
+        ttk.Label(frame_test, text="Блок (4 символа):").grid(row=0, column=0, sticky='w', pady=5)
+        self.sblock_test_entry = ttk.Entry(frame_test, width=20)
+        self.sblock_test_entry.grid(row=0, column=1, padx=5, pady=5)
+
+        ttk.Button(frame_test, text="Зашифровать блок", command=self.sblock_encrypt_test).grid(row=0, column=2, padx=10)
+        ttk.Button(frame_test, text="Расшифровать блок", command=self.sblock_decrypt_test).grid(row=0, column=3, padx=5)
+
+        ttk.Label(frame_test, text="Результат:").grid(row=1, column=0, sticky='w', pady=5)
+        self.sblock_test_result = ttk.Entry(frame_test, width=20, state='readonly')
+        self.sblock_test_result.grid(row=1, column=1, padx=5, pady=5)
+
 
     # ========== МЕТОДЫ ДЛЯ ПРОСТОГО ШИФРА ==========
 
@@ -255,6 +303,138 @@ class CipherApp:
             clipboard_text = self.root.clipboard_get()
             self.poly_text_decrypt.delete("1.0", tk.END)
             self.poly_text_decrypt.insert("1.0", clipboard_text)
+        except:
+            messagebox.showwarning("Ошибка", "Не удалось получить текст из буфера")
+
+        # ========== МЕТОДЫ ДЛЯ S-БЛОКОВ ==========
+
+    def update_sblock_key_len(self, event=None):
+        """Обновить отображение длины ключа"""
+        key = self.sblock_key_entry.get()
+        self.sblock_key_len_label.config(text=str(len(key)))
+
+    def sblock_encrypt_test(self):
+        """Тестовое шифрование блока"""
+        key = self.sblock_key_entry.get().strip().upper()
+        block = self.sblock_test_entry.get().strip().upper()
+
+        if not key:
+            messagebox.showerror("Ошибка", "Введите ключ")
+            return
+        if len(key) != 16:
+            messagebox.showerror("Ошибка", "Длина ключа должна быть 16 символов")
+            return
+        if not block:
+            messagebox.showerror("Ошибка", "Введите блок для шифрования")
+            return
+        if len(block) != 4:
+            messagebox.showerror("Ошибка", "Длина блока должна быть 4 символа")
+            return
+
+        result = STrithemus.encrypt_block(block, key)
+        self.sblock_test_result.config(state='normal')
+        self.sblock_test_result.delete(0, tk.END)
+        self.sblock_test_result.insert(0, result)
+        self.sblock_test_result.config(state='readonly')
+
+    def sblock_decrypt_test(self):
+        """Тестовое дешифрование блока"""
+        key = self.sblock_key_entry.get().strip().upper()
+        block = self.sblock_test_entry.get().strip().upper()
+
+        if not key:
+            messagebox.showerror("Ошибка", "Введите ключ")
+            return
+        if len(key) != 16:
+            messagebox.showerror("Ошибка", "Длина ключа должна быть 16 символов")
+            return
+        if not block:
+            messagebox.showerror("Ошибка", "Введите блок для дешифрования")
+            return
+        if len(block) != 4:
+            messagebox.showerror("Ошибка", "Длина блока должна быть 4 символа")
+            return
+
+        result = STrithemus.decrypt_block(block, key)
+        self.sblock_test_result.config(state='normal')
+        self.sblock_test_result.delete(0, tk.END)
+        self.sblock_test_result.insert(0, result)
+        self.sblock_test_result.config(state='readonly')
+
+    def sblock_encrypt_text(self):
+        """Шифрование текста с использованием S-блоков"""
+        key = self.sblock_key_entry.get().strip().upper()
+        text = self.sblock_text_encrypt.get("1.0", tk.END).strip().upper()
+
+        if not key:
+            messagebox.showerror("Ошибка", "Введите ключ")
+            return
+        if len(key) != 16:
+            messagebox.showerror("Ошибка", "Длина ключа должна быть 16 символов")
+            return
+        if not text:
+            messagebox.showerror("Ошибка", "Введите текст для шифрования")
+            return
+
+        # Показываем дополненный текст
+        padded_len = ((len(text) + 3) // 4) * 4
+        padded_text = text.ljust(padded_len, '_')
+
+        if padded_text != text:
+            messagebox.showinfo("Информация",
+                                f"Текст дополнен до {padded_len} символов (кратно 4).\n"
+                                f"Используется символ '_' для дополнения.")
+
+        result = STrithemus.encrypt_text(text, key)
+
+        # Форматируем вывод по блокам по 4 символа
+        formatted = ' '.join([result[i:i + 4] for i in range(0, len(result), 4)])
+
+        self.sblock_result_encrypt.delete("1.0", tk.END)
+        self.sblock_result_encrypt.insert("1.0", formatted)
+
+    def sblock_decrypt_text(self):
+        """Дешифрование текста с использованием S-блоков"""
+        key = self.sblock_key_entry.get().strip().upper()
+        cipher_text = self.sblock_text_decrypt.get("1.0", tk.END).strip().upper()
+
+        # Убираем пробелы, если они были добавлены для форматирования
+        cipher_text = cipher_text.replace(' ', '')
+
+        if not key:
+            messagebox.showerror("Ошибка", "Введите ключ")
+            return
+        if len(key) != 16:
+            messagebox.showerror("Ошибка", "Длина ключа должна быть 16 символов")
+            return
+        if not cipher_text:
+            messagebox.showerror("Ошибка", "Введите шифр для расшифровки")
+            return
+        if len(cipher_text) % 4 != 0:
+            messagebox.showerror("Ошибка", f"Длина шифра ({len(cipher_text)}) не кратна 4")
+            return
+
+        result = STrithemus.decrypt_text(cipher_text, key)
+
+        self.sblock_result_decrypt.delete("1.0", tk.END)
+        self.sblock_result_decrypt.insert("1.0", result)
+
+    def sblock_copy_cipher(self):
+        """Копировать результат шифрования S-блоков"""
+        cipher = self.sblock_result_encrypt.get("1.0", tk.END).strip()
+        # Убираем пробелы форматирования
+        cipher = cipher.replace(' ', '')
+        if cipher:
+            self.root.clipboard_clear()
+            self.root.clipboard_append(cipher)
+            messagebox.showinfo("Скопировано", "Шифр скопирован в буфер обмена")
+
+    def sblock_paste_cipher(self):
+        """Вставить текст из буфера в поле дешифрования"""
+        try:
+            clipboard_text = self.root.clipboard_get()
+            self.sblock_text_decrypt.delete("1.0", tk.END)
+            self.sblock_text_decrypt.insert("1.0", clipboard_text)
         except:
             messagebox.showwarning("Ошибка", "Не удалось получить текст из буфера")
 
