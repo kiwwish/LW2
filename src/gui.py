@@ -9,7 +9,7 @@ class CipherApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Шифр Тритемуса")
-        self.root.geometry("1000x950")
+        self.root.geometry("900x680")
 
         # Создаём вкладки
         self.notebook = ttk.Notebook(root)
@@ -46,7 +46,7 @@ class CipherApp:
         main_frame = ttk.Frame(self.frame_simple)
         main_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # === ОБЛАСТЬ ТАБЛИЦЫ ===
+        # Построение алфавита
         frame_table = ttk.LabelFrame(main_frame, text="Таблица замены", padding=10)
         frame_table.pack(fill='x', pady=(0, 10))
 
@@ -70,13 +70,13 @@ class CipherApp:
                                   state='disabled', bg='#f0f0f0')
         self.table_text.pack(side='left')
 
-        # === ОБЛАСТЬ ШИФРОВАНИЯ ===
+        # Область шифрования
         frame_encrypt = ttk.LabelFrame(main_frame, text="Шифрование", padding=10)
         frame_encrypt.pack(fill='x', pady=(0, 10))
 
         # Текст для шифрования
         ttk.Label(frame_encrypt, text="Текст для шифрования:").pack(anchor='w', pady=(0, 5))
-        self.text_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=4, width=70)
+        self.text_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=1.5, width=40)
         self.text_encrypt.pack(fill='x', pady=(0, 5))
 
         # Кнопки шифрования
@@ -90,16 +90,16 @@ class CipherApp:
 
         # Результат шифрования
         ttk.Label(frame_encrypt, text="Результат:").pack(anchor='w', pady=(0, 5))
-        self.result_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=4, width=70)
+        self.result_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=1.5, width=40)
         self.result_encrypt.pack(fill='x')
 
-        # === ОБЛАСТЬ ДЕШИФРОВАНИЯ ===
+        # область дешифрования
         frame_decrypt = ttk.LabelFrame(main_frame, text="Дешифрование", padding=10)
         frame_decrypt.pack(fill='x')
 
         # Текст для дешифрования
         ttk.Label(frame_decrypt, text="Шифр для расшифровки:").pack(anchor='w', pady=(0, 5))
-        self.text_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=4, width=70)
+        self.text_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=1.5, width=40)
         self.text_decrypt.pack(fill='x', pady=(0, 5))
 
         # Кнопки дешифрования (две в одной строке)
@@ -113,7 +113,7 @@ class CipherApp:
 
         # Результат дешифрования
         ttk.Label(frame_decrypt, text="Результат:").pack(anchor='w', pady=(0, 5))
-        self.result_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=4, width=70)
+        self.result_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=1.5, width=40)
         self.result_decrypt.pack(fill='x')
 
     # Методы для простого шифра
@@ -194,48 +194,70 @@ class CipherApp:
 
     def setup_poly_tab(self):
         """Настройка вкладки полиалфавитного шифра Тритемуса"""
-        # Область для ключа
-        frame_key = ttk.LabelFrame(self.frame_poly, text="Ключ", padding=10)
-        frame_key.pack(fill='x', padx=10, pady=(10, 5))
+        # Стиль для кнопок (одинаковый размер)
+        button_style = {'width': 20}
 
-        ttk.Label(frame_key, text="Ключ (текст):").grid(row=0, column=0, sticky='w', pady=5)
-        self.poly_key_entry = ttk.Entry(frame_key, width=60)
-        self.poly_key_entry.grid(row=0, column=1, padx=5, pady=5)
+        # Основной фрейм с отступами
+        main_frame = ttk.Frame(self.frame_poly)
+        main_frame.pack(fill='both', expand=True, padx=10, pady=10)
 
-        # Область шифрования
-        frame_encrypt = ttk.LabelFrame(self.frame_poly, text="Шифрование", padding=10)
-        frame_encrypt.pack(fill='x', padx=10, pady=5)
+        # Область для ввода ключа
+        frame_key = ttk.LabelFrame(main_frame, text="Ключ", padding=10)
+        frame_key.pack(fill='x', pady=(0, 10))
 
-        ttk.Label(frame_encrypt, text="Текст для шифрования:").grid(row=0, column=0, sticky='w', pady=5)
-        self.poly_text_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=5, width=70)
-        self.poly_text_encrypt.grid(row=0, column=1, padx=5, pady=5)
+        # Строка с ключом
+        key_row_frame = ttk.Frame(frame_key)
+        key_row_frame.pack(fill='x')
 
-        ttk.Button(frame_encrypt, text="Зашифровать", command=self.poly_encrypt_text).grid(row=1, column=1, pady=10,
-                                                                                           sticky='w')
+        ttk.Label(key_row_frame, text="Ключ (текст):").pack(side='left', padx=(0, 5))
+        self.poly_key_entry = ttk.Entry(key_row_frame, width=50)
+        self.poly_key_entry.pack(side='left', fill='x', expand=True)
 
-        ttk.Label(frame_encrypt, text="Результат:").grid(row=2, column=0, sticky='w', pady=5)
-        self.poly_result_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=5, width=70)
-        self.poly_result_encrypt.grid(row=2, column=1, padx=5, pady=5)
+        # Область для шифрования
+        frame_encrypt = ttk.LabelFrame(main_frame, text="Шифрование", padding=10)
+        frame_encrypt.pack(fill='x', pady=(0, 10))
 
-        ttk.Button(frame_encrypt, text="Копировать шифр", command=self.poly_copy_cipher).grid(row=3, column=1, pady=5,
-                                                                                              sticky='w')
+        # Текст для шифрования
+        ttk.Label(frame_encrypt, text="Текст для шифрования:").pack(anchor='w', pady=(0, 5))
+        self.poly_text_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=1.5, width=70)
+        self.poly_text_encrypt.pack(fill='x', pady=(0, 5))
 
-        # Область дешифрования
-        frame_decrypt = ttk.LabelFrame(self.frame_poly, text="Дешифрование", padding=10)
-        frame_decrypt.pack(fill='x', padx=10, pady=(5, 10))
+        # Кнопки шифрования
+        buttons_frame_encrypt = ttk.Frame(frame_encrypt)
+        buttons_frame_encrypt.pack(fill='x', pady=(0, 10))
 
-        ttk.Label(frame_decrypt, text="Шифр для расшифровки:").grid(row=0, column=0, sticky='w', pady=5)
-        self.poly_text_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=5, width=70)
-        self.poly_text_decrypt.grid(row=0, column=1, padx=5, pady=5)
+        ttk.Button(buttons_frame_encrypt, text="Зашифровать",
+                   command=self.poly_encrypt_text, **button_style).pack(side='left', padx=(0, 10))
+        ttk.Button(buttons_frame_encrypt, text="Копировать шифр",
+                   command=self.poly_copy_cipher, **button_style).pack(side='left')
 
-        ttk.Button(frame_decrypt, text="Вставить из буфера", command=self.poly_paste_cipher).grid(row=1, column=1,
-                                                                                                  pady=5, sticky='w')
-        ttk.Button(frame_decrypt, text="Расшифровать", command=self.poly_decrypt_text).grid(row=2, column=1, pady=10,
-                                                                                            sticky='w')
+        # Результат шифрования
+        ttk.Label(frame_encrypt, text="Результат:").pack(anchor='w', pady=(0, 5))
+        self.poly_result_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=1.5, width=70)
+        self.poly_result_encrypt.pack(fill='x')
 
-        ttk.Label(frame_decrypt, text="Результат:").grid(row=3, column=0, sticky='w', pady=5)
-        self.poly_result_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=5, width=70)
-        self.poly_result_decrypt.grid(row=3, column=1, padx=5, pady=5)
+        # Область для дешифрования
+        frame_decrypt = ttk.LabelFrame(main_frame, text="Дешифрование", padding=10)
+        frame_decrypt.pack(fill='x')
+
+        # Текст для дешифрования
+        ttk.Label(frame_decrypt, text="Шифр для расшифровки:").pack(anchor='w', pady=(0, 5))
+        self.poly_text_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=1.5, width=70)
+        self.poly_text_decrypt.pack(fill='x', pady=(0, 5))
+
+        # Кнопки дешифрования (две в одной строке)
+        buttons_frame_decrypt = ttk.Frame(frame_decrypt)
+        buttons_frame_decrypt.pack(fill='x', pady=(0, 10))
+
+        ttk.Button(buttons_frame_decrypt, text="Вставить из буфера",
+                   command=self.poly_paste_cipher, **button_style).pack(side='left', padx=(0, 10))
+        ttk.Button(buttons_frame_decrypt, text="Расшифровать",
+                   command=self.poly_decrypt_text, **button_style).pack(side='left')
+
+        # Результат дешифрования
+        ttk.Label(frame_decrypt, text="Результат:").pack(anchor='w', pady=(0, 5))
+        self.poly_result_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=1.5, width=70)
+        self.poly_result_decrypt.pack(fill='x')
 
     # Методы для полиалфавитного шифра
     def poly_encrypt_text(self):
@@ -327,15 +349,15 @@ class CipherApp:
         self.sblock_key_entry.bind('<KeyRelease>', self.update_sblock_key_len)
 
         # Область для тестового блока
-        frame_test = ttk.LabelFrame(self.frame_sblock, text="Тестирование блока", padding=10)
+        frame_test = ttk.LabelFrame(self.frame_sblock, text="Работа с блоком", padding=10)
         frame_test.pack(fill='x', padx=10, pady=5)
 
         ttk.Label(frame_test, text="Блок (4 символа):").grid(row=0, column=0, sticky='w', pady=5)
         self.sblock_test_entry = ttk.Entry(frame_test, width=20)
         self.sblock_test_entry.grid(row=0, column=1, padx=5, pady=5)
 
-        ttk.Button(frame_test, text="Зашифровать блок", command=self.sblock_encrypt_test).grid(row=0, column=2, padx=10)
-        ttk.Button(frame_test, text="Расшифровать блок", command=self.sblock_decrypt_test).grid(row=0, column=3, padx=5)
+        ttk.Button(frame_test, text="Зашифровать", command=self.sblock_encrypt_test).grid(row=0, column=2, padx=10)
+        ttk.Button(frame_test, text="Расшифровать", command=self.sblock_decrypt_test).grid(row=0, column=3, padx=5)
 
         ttk.Label(frame_test, text="Результат:").grid(row=1, column=0, sticky='w', pady=5)
         self.sblock_test_result = ttk.Entry(frame_test, width=20, state='readonly')
@@ -418,7 +440,7 @@ class CipherApp:
         self.enhanced_key_entry.grid(row=0, column=1, padx=5, pady=5)
 
         ttk.Label(frame_key, text="Длина:").grid(row=0, column=2, padx=5, pady=5)
-        self.enhanced_key_len_label = ttk.Label(frame_key, text="16", width=5)
+        self.enhanced_key_len_label = ttk.Label(frame_key, text="0", width=5)
         self.enhanced_key_len_label.grid(row=0, column=3, padx=5, pady=5)
 
         # Обновляем длину при вводе
@@ -438,7 +460,7 @@ class CipherApp:
                    command=self.enhanced_decrypt_block).grid(row=0, column=3, padx=5)
 
         ttk.Label(frame_block, text="Результат:").grid(row=1, column=0, sticky='w', pady=5)
-        self.enhanced_block_result = ttk.Entry(frame_block, width=20)
+        self.enhanced_block_result = ttk.Entry(frame_block, width=20, state='readonly')
         self.enhanced_block_result.grid(row=1, column=1, padx=5, pady=5)
 
         # Методы для усиленных S-блоков
