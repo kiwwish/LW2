@@ -1,5 +1,5 @@
 # polyalphabetic.py
-from alphabet import sym2num, num2sym, text2array
+from alphabet import sym2num, num2sym, text2array, array2text
 
 
 def Thrithemus_table(KEY_IN: str) -> str:
@@ -110,9 +110,6 @@ class PolyalphabeticTrithemus:
 
         return out
 
-
-# В конец polyalphabetic.py добавить:
-
 class STrithemus:
     """Класс для S-блоков шифра Тритемуса"""
 
@@ -139,3 +136,129 @@ class STrithemus:
         # Используем полиалфавитный шифр
         cipher = PolyalphabeticTrithemus(key)
         return cipher.decrypt(block)
+
+
+class EnhancedSTrithemus:
+    """Класс для усиленных S-блоков (модифицированные по псевдокоду)"""
+
+    @staticmethod
+    def _compute_permutation(key_array):
+        """Вычисление перестановки M на основе ключа"""
+        # Инициализация M = [0, 1, 2, 3]
+        M = [0, 1, 2, 3]
+
+        # Вычисление sum по алгоритму
+        s = 0
+        for i in range(16):
+            term = key_array[i]
+            if i % 2 == 1:  # если i нечётное, (-1)^i = -1
+                term = -term
+            s = (24 + s + term) % 24
+
+        # Перемешивание M (k = 0, 1, 2)
+        for k in range(3):
+            t = s % (4 - k)
+            s = s // (4 - k)  # целочисленное деление
+            # Обмен M[k] и M[k + t]
+            tmp = M[k]
+            M[k] = M[k + t]
+            M[k + t] = tmp
+
+        return M
+
+    @staticmethod
+    def frw_merge_block(block: str, key: str) -> str:
+        """Прямое преобразование блока (fwr_merge_block)"""
+        if len(block) != 4 or len(key) != 16:
+            return "input_error"
+
+        key_array = text2array(key)
+        inp = text2array(block)
+        M = EnhancedSTrithemus._compute_permutation(key_array)
+
+        # Прямой алгоритм (j = 0..3)
+        for j in range(4):
+            b = M[(1 + j) % 4]
+            a = M[j % 4]
+            inp[b] = (inp[b] + inp[a]) % 32
+
+        return array2text(inp)
+
+    @staticmethod
+    def inv_merge_block(block: str, key: str) -> str:
+        """Обратное преобразование блока (inv_merge_block)"""
+        if len(block) != 4 or len(key) != 16:
+            return "input_error"
+
+        key_array = text2array(key)
+        inp = text2array(block)
+        M = EnhancedSTrithemus._compute_permutation(key_array)
+
+        # Обратный алгоритм (j = 3,2,1,0)
+        for j in range(3, -1, -1):
+            b = M[(1 + j) % 4]
+            a = M[j % 4]
+            inp[b] = (32 + inp[b] - inp[a]) % 32
+
+        return array2text(inp)
+
+    @staticmethod
+    def encrypt_block(block: str, key: str) -> str:
+        """Усиленное шифрование блока (frw_S_TrithemusM)"""
+        if len(block) != 4 or len(key) != 16:
+            return "input_error"
+
+        # 1. inv_merge_block
+        tmp1 = EnhancedSTrithemus.inv_merge_block(block, key)
+        # 2. frw_S_Trithemus (простой S-блок)
+        tmp2 = STrithemus.encrypt_block(tmp1, key)
+        # 3. frw_merge_block
+        out = EnhancedSTrithemus.frw_merge_block(tmp2, key)
+
+        return out
+
+    @staticmethod
+    def decrypt_block(block: str, key: str) -> str:
+        """Усиленное дешифрование блока (inv_S_TrithemusM)"""
+        if len(block) != 4 or len(key) != 16:
+            return "input_error"
+
+        # 1. inv_merge_block
+        tmp1 = EnhancedSTrithemus.inv_merge_block(block, key)
+        # 2. inv_S_Trithemus (простой S-блок)
+        tmp2 = STrithemus.decrypt_block(tmp1, key)
+        # 3. frw_merge_block
+        out = EnhancedSTrithemus.frw_merge_block(tmp2, key)
+
+        return out
+
+    @staticmethod
+    def encrypt_text(text: str, key: str) -> str:
+        """Усиленное шифрование текста"""
+        if len(key) != 16:
+            return "input_error"
+
+        # Дополняем текст
+        padded_len = ((len(text) + 3) // 4) * 4
+        padded_text = text.ljust(padded_len, '_')
+
+        result = ""
+        for i in range(0, len(padded_text), 4):
+            block = padded_text[i:i + 4]
+            result += EnhancedSTrithemus.encrypt_block(block, key)
+
+        return result
+
+    @staticmethod
+    def decrypt_text(cipher_text: str, key: str) -> str:
+        """Усиленное дешифрование текста"""
+        if len(key) != 16 or len(cipher_text) % 4 != 0:
+            return "input_error"
+
+        result = ""
+        for i in range(0, len(cipher_text), 4):
+            block = cipher_text[i:i + 4]
+            result += EnhancedSTrithemus.decrypt_block(block, key)
+
+        # Убираем дополняющие символы '_'
+        return result.rstrip('_')
