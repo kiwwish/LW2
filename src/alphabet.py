@@ -19,20 +19,6 @@ def num2sym(num: int) -> str:
         code += 1  # компенсируем пропуск Ъ
     return chr(code)
 
-alphabet = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЬЭЮЯ_"
-
-# Проверяем преобразование
-for i, ch in enumerate(alphabet, 1):
-    if ch == '_':
-        num = 0
-    else:
-        num = i
-    # Прямое преобразование
-    calc_num = sym2num(ch)
-    # Обратное
-    calc_ch = num2sym(calc_num)
-    print(f"{ch} -> {calc_num} -> {calc_ch} : {ch == calc_ch}")
-
 def add_s(s1: str, s2: str) -> str:
     tmp = sym2num(s1) + sym2num(s2)
     return num2sym(tmp % 32)

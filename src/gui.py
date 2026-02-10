@@ -320,7 +320,7 @@ class CipherApp:
         self.sblock_key_len_label.config(text=str(len(key)))
 
     def sblock_encrypt_test(self):
-        """Тестовое шифрование блока"""
+        """Шифрование блока"""
         key = self.sblock_key_entry.get().strip().upper()
         block = self.sblock_test_entry.get().strip().upper()
 
@@ -344,7 +344,7 @@ class CipherApp:
         self.sblock_test_result.config(state='readonly')
 
     def sblock_decrypt_test(self):
-        """Тестовое дешифрование блока"""
+        """Дешифрование блока"""
         key = self.sblock_key_entry.get().strip().upper()
         block = self.sblock_test_entry.get().strip().upper()
 
@@ -387,7 +387,6 @@ class CipherApp:
 
         ttk.Label(frame_key, text="Ключ (16 символов):").grid(row=0, column=0, sticky='w', pady=5)
         self.enhanced_key_entry = ttk.Entry(frame_key, width=50)
-        self.enhanced_key_entry.insert(0, "ХОРОШО_ВЫТЬ_ВАМИ")  # Пример из псевдокода
         self.enhanced_key_entry.grid(row=0, column=1, padx=5, pady=5)
 
         ttk.Label(frame_key, text="Длина:").grid(row=0, column=2, padx=5, pady=5)
@@ -403,7 +402,6 @@ class CipherApp:
 
         ttk.Label(frame_block, text="Блок (4 символа):").grid(row=0, column=0, sticky='w', pady=5)
         self.enhanced_block_entry = ttk.Entry(frame_block, width=20)
-        self.enhanced_block_entry.insert(0, "БЛОК")  # Пример из псевдокода
         self.enhanced_block_entry.grid(row=0, column=1, padx=5, pady=5)
 
         ttk.Button(frame_block, text="Зашифровать",
@@ -415,63 +413,12 @@ class CipherApp:
         self.enhanced_block_result = ttk.Entry(frame_block, width=20)
         self.enhanced_block_result.grid(row=1, column=1, padx=5, pady=5)
 
-        # Область шифрования текста
-        frame_encrypt = ttk.LabelFrame(self.frame_enhanced, text="Шифрование текста", padding=10)
-        frame_encrypt.pack(fill='x', padx=10, pady=5)
-
-        ttk.Label(frame_encrypt, text="Текст для шифрования:").grid(row=0, column=0, sticky='w', pady=5)
-        self.enhanced_text_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=4, width=70)
-        self.enhanced_text_encrypt.grid(row=0, column=1, padx=5, pady=5)
-
-        ttk.Button(frame_encrypt, text="Зашифровать текст",
-                   command=self.enhanced_encrypt_text).grid(row=1, column=1, pady=10, sticky='w')
-
-        ttk.Label(frame_encrypt, text="Результат:").grid(row=2, column=0, sticky='w', pady=5)
-        self.enhanced_result_encrypt = scrolledtext.ScrolledText(frame_encrypt, height=4, width=70)
-        self.enhanced_result_encrypt.grid(row=2, column=1, padx=5, pady=5)
-
-        ttk.Button(frame_encrypt, text="Копировать шифр",
-                   command=self.enhanced_copy_cipher).grid(row=3, column=1, pady=5, sticky='w')
-
-        # Область дешифрования текста
-        frame_decrypt = ttk.LabelFrame(self.frame_enhanced, text="Дешифрование текста", padding=10)
-        frame_decrypt.pack(fill='x', padx=10, pady=(5, 10))
-
-        ttk.Label(frame_decrypt, text="Шифр для расшифровки:").grid(row=0, column=0, sticky='w', pady=5)
-        self.enhanced_text_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=4, width=70)
-        self.enhanced_text_decrypt.grid(row=0, column=1, padx=5, pady=5)
-
-        ttk.Button(frame_decrypt, text="Вставить из буфера",
-                   command=self.enhanced_paste_cipher).grid(row=1, column=1, pady=5, sticky='w')
-        ttk.Button(frame_decrypt, text="Расшифровать текст",
-                   command=self.enhanced_decrypt_text).grid(row=2, column=1, pady=10, sticky='w')
-
-        ttk.Label(frame_decrypt, text="Результат:").grid(row=3, column=0, sticky='w', pady=5)
-        self.enhanced_result_decrypt = scrolledtext.ScrolledText(frame_decrypt, height=4, width=70)
-        self.enhanced_result_decrypt.grid(row=3, column=1, padx=5, pady=5)
-
         # Методы для усиленных S-блоков
 
     def update_enhanced_key_len(self, event=None):
         """Обновить отображение длины ключа"""
         key = self.enhanced_key_entry.get()
         self.enhanced_key_len_label.config(text=str(len(key)))
-
-    def run_enhanced_test(self):
-        """Запустить тестовый пример из псевдокода"""
-        key = "ХОРОШО_ВЫТЬ_ВАМИ"
-        block = "БЛОК"
-
-        result = EnhancedSTrithemus.encrypt_block(block, key)
-        decrypted = EnhancedSTrithemus.decrypt_block(result, key)
-
-        self.enhanced_test_result.delete("1.0", tk.END)
-        self.enhanced_test_result.insert("1.0",
-                                         f"Ключ: '{key}'\n"
-                                         f"Блок: '{block}'\n"
-                                         f"Шифр: '{result}' (ожидается 'ЧФЮЖ')\n"
-                                         f"Дешифровка: '{decrypted}' (ожидается 'БЛОК')\n"
-                                         f"Совпадение: {result == 'ЧФЮЖ' and decrypted == 'БЛОК'}")
 
     def enhanced_encrypt_block(self):
         """Усиленное шифрование блока"""
@@ -498,59 +445,6 @@ class CipherApp:
         result = EnhancedSTrithemus.decrypt_block(block, key)
         self.enhanced_block_result.delete(0, tk.END)
         self.enhanced_block_result.insert(0, result)
-
-    def enhanced_encrypt_text(self):
-        """Усиленное шифрование текста"""
-        key = self.enhanced_key_entry.get().strip().upper()
-        text = self.enhanced_text_encrypt.get("1.0", tk.END).strip().upper()
-
-        if not key or len(key) != 16 or not text:
-            messagebox.showerror("Ошибка", "Ключ должен быть 16 символов")
-            return
-
-        result = EnhancedSTrithemus.encrypt_text(text, key)
-
-        # Форматируем вывод по блокам по 4 символа
-        formatted = ' '.join([result[i:i + 4] for i in range(0, len(result), 4)])
-
-        self.enhanced_result_encrypt.delete("1.0", tk.END)
-        self.enhanced_result_encrypt.insert("1.0", formatted)
-
-    def enhanced_decrypt_text(self):
-        """Усиленное дешифрование текста"""
-        key = self.enhanced_key_entry.get().strip().upper()
-        cipher = self.enhanced_text_decrypt.get("1.0", tk.END).strip().upper()
-
-        # Убираем пробелы форматирования
-        cipher = cipher.replace(' ', '')
-
-        if not key or len(key) != 16 or not cipher or len(cipher) % 4 != 0:
-            messagebox.showerror("Ошибка", "Ключ - 16 символов, шифр должен быть кратен 4")
-            return
-
-        result = EnhancedSTrithemus.decrypt_text(cipher, key)
-
-        self.enhanced_result_decrypt.delete("1.0", tk.END)
-        self.enhanced_result_decrypt.insert("1.0", result)
-
-    def enhanced_copy_cipher(self):
-        """Копировать результат усиленного шифрования"""
-        cipher = self.enhanced_result_encrypt.get("1.0", tk.END).strip()
-        # Убираем пробелы форматирования
-        cipher = cipher.replace(' ', '')
-        if cipher:
-            self.root.clipboard_clear()
-            self.root.clipboard_append(cipher)
-            messagebox.showinfo("Скопировано", "Шифр скопирован в буфер обмена")
-
-    def enhanced_paste_cipher(self):
-        """Вставить текст из буфера в поле дешифрования"""
-        try:
-            text = self.root.clipboard_get()
-            self.enhanced_text_decrypt.delete("1.0", tk.END)
-            self.enhanced_text_decrypt.insert("1.0", text)
-        except:
-            messagebox.showwarning("Ошибка", "Не удалось получить текст из буфера")
 
 
 def main():
