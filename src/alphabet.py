@@ -1,17 +1,19 @@
+# Определение номера символа в алфавите
 def sym2num(sym: str) -> int:
-    """По алгоритму из псевдокода, но с Ы в алфавите."""
     if len(sym) != 1:
-        raise ValueError("Должен быть один символ")
+        print ("Должен быть один символ")
     tmp = ord(sym)
     if tmp == 95:  # '_'
         return 0
     out = tmp - 1039
-    if tmp > 1065:  # если символ после Щ (т.е. пропускаем Ъ)
+    if tmp > 1065:
         out -= 1
     return out
 
+# Обпределенеие символа по номеру в алфавите
 def num2sym(num: int) -> str:
-    """Обратное преобразование."""
+    if num < 0 or num > 33:
+        print ("Введите номер от 0 до 31")
     if num == 0:
         return '_'
     code = num + 1039
@@ -76,9 +78,8 @@ def sub_txt(T1: str, T2: str) -> str:
     return out
 
 def text2array(text: str) -> list:
-    """Текст → массив чисел"""
     return [sym2num(ch) for ch in text]
 
 def array2text(arr: list) -> str:
-    """Массив чисел → текст"""
     return ''.join(num2sym(num) for num in arr)
+

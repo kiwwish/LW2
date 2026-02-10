@@ -1,15 +1,12 @@
-
 from alphabet import sym2num, num2sym
 
-
+# Класс для реализации обычного шифра Тритимуса
 class TrithemusCipher:
-    """Класс для простого шифра Тритемуса"""
-
     def __init__(self, key: str):
         self.key = key.upper()
-        self.table = self._build_table()
+        self.table = self.build_table()
 
-    def _build_table(self) -> str:
+    def build_table(self) -> str:
         """Построение таблицы замены по ключу"""
         out = ""
         A = "АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЬЭЮЯ_"
