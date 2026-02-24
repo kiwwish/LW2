@@ -3,6 +3,7 @@ from collections import Counter
 from alphabet import sym2num, num2sym, ALPHABET_SIZE, verify_alphabet
 from polyTritimus import STrithemus, EnhancedSTrithemus
 
+
 class SBlockTester:
     """Тестирование S-блоков строго по двум требованиям преподавателя"""
 

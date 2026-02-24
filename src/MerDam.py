@@ -1,0 +1,105 @@
+from functions import c_block
+from alphabet import text2array, array2text, add_txt, sub_txt
+def revers_str(s: str) -> str:
+    s_arr = text2array(s)
+    tmp = s_arr[::-1]
+    out = array2text(tmp)
+    return out
+
+# print(revers_str('свы'))
+
+def blocks_mix(in1: str, in2:str) -> list:
+    in1 = revers_str(in1)
+    out = []
+    out.append(add_txt(in1,in2))
+    out.append(sub_txt(in1, in2))
+    return out
+
+in1 = 'хорошо_быть_вами'
+in2 = 'кьеркегор_пропал'
+# print(blocks_mix(in1,in2))
+
+def block_mask (s: str, const: str) -> str:
+    arr = text2array(s)
+    con = text2array(const)
+    out_arr = [0] * 16
+    for i in range(16):
+        if arr[i] < (con[i] + i):
+            out_arr[i] = (64 - (con[i] - i)) % 32
+        else:
+            out_arr[i] = (arr[i] - i) % 32
+    out = array2text(out_arr)
+    return out
+
+# print(block_mask(in1,in2))
+
+def pad_MD(s: str, str_size: int) -> str:
+    out = s
+    l = len(s)
+    rem = str_size - (l % 64)
+    if rem != str_size:
+        for i in range(rem):
+            out = out + '_'
+    return out
+
+# print(pad_MD(in1, 80))
+
+def macrocompression(s: str, state: str) ->str:
+    out = []
+    s = pad_MD(s, 64)
+    state = pad_MD(state, 80)
+    a = add_txt(s[0:16], state[0:16])
+    b = add_txt(s[16:32], state[16:32])
+    c = add_txt(s[32:48], state[32:48])
+    d = add_txt(s[48:64], state[48:64])
+    e = state[64:80]
+    con = 'ААААЯЯЯЯААЯЯААЯЯ'
+    for i in range(12):
+        e = add_txt(e, c_block([a, b, c, d], 16))
+        tmp = blocks_mix(c, d)
+        con = add_txt(con, 'ААААЯЯЯЯААЯЯААЯЯ')
+        c = tmp[0]
+        d = tmp[1]
+        b = block_mask(b, con)
+        a = b
+        b = c
+        c = d
+        d = e
+        e = a
+    out.append(a)
+    out.append(b)
+    out.append(c)
+    out.append(d)
+    out.append(e)
+    return out
+
+s1 = 'кьеркегор_пропал'
+s2 = 'хорошо_быть_вами'
+input = s1 + s2
+ins = '_'
+print(macrocompression(input, ins))
+
+def MerDam_hash(msg):
+    data = pad_MD(msg, 64)
+    n = int(len(data) / 64)
+    a = '_' * 16
+    b = '_' * 16
+    c = '_' * 16
+    d = '_' * 16
+    e = '_' * 16
+    for i in range(n):
+        tmp = data[64*i:64]
+        state = macrocompression(tmp, (a + b + c + d + e))
+        a = state[0]
+        b = state[1]
+        c = state[2]
+        d = state[3]
+        e = state[4]
+    p1 = c_block([a, e], 16)
+    p2 = c_block([b, e], 16)
+    p3 = c_block([c, e], 16)
+    p4 = c_block([d, e], 16)
+    out = p1 + p2 + p3 + p4
+    return out
+
+print(MerDam_hash(s1 + s2))

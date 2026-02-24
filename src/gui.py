@@ -1,4 +1,3 @@
-# gui.py
 import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
 from tritimus import TrithemusCipher
@@ -509,3 +508,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

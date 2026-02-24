@@ -11,17 +11,23 @@ def verify_alphabet() -> bool:
     print(f"✓ Алфавит корректен: {ALPHABET_SIZE} символов")
     return True
 
+def str2vec(s: str) -> list[int]:
+    return [ord(c) for c in s.upper()]
+
 # Определение номера символа в алфавите
-def sym2num(sym: str) -> int:
-    if len(sym) != 1:
-        print ("Должен быть один символ")
-    tmp = ord(sym)
-    if tmp == 95:  # '_'
+def sym2num(sym_in: str) -> int:
+    tmp = str2vec(sym_in)
+
+    if tmp[0] != 95:  # 95 = '_'
+        result = tmp[0] - 1039
+        if tmp[0] > 1066:
+            result -= 1
+        return result
+    else:
         return 0
-    out = tmp - 1039
-    if tmp > 1065:
-        out -= 1
-    return out
+
+def vec2str(vec: list[int]) -> str:
+    return ''.join([chr(code) for code in vec])
 
 # Обпределенеие символа по номеру в алфавите
 def num2sym(num: int) -> str:
@@ -61,8 +67,11 @@ def add_txt(T1: str, T2: str) -> str:
         for i in range(m, M):
             out += T_IN[i]
 
-    return out
+    return out.upper()
 
+tt1 = 'ежик'
+tt2 = 'в_тумане'
+# print(add_txt(tt1, tt2))
 
 def sub_txt(T1: str, T2: str) -> str:
     out = ""
@@ -90,19 +99,18 @@ def sub_txt(T1: str, T2: str) -> str:
 
     return out
 
+tt3 = 'барон'
+tt4 = 'варан'
+# print(sub_txt(tt3, tt4))
+
 def text2array(text: str) -> list:
     return [sym2num(ch) for ch in text]
+
 
 def array2text(arr: list) -> str:
     return ''.join(num2sym(num) for num in arr)
 
-print (text2array('орошо_быть_вами'))
-k = 'хорошо быть вами'
-arr = text2array(k)
-sum = 0
-for i in range (16):
-    sum = (24+sum+(-1)^(i)*arr[i])%24
-    print(arr[i], sum + (-1)^(i) * arr[i], sum)
 
-arr_1 = text2array('блок')
-print(arr_1)
+
+
+

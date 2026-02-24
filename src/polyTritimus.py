@@ -1,4 +1,3 @@
-
 from alphabet import sym2num, num2sym, text2array, array2text
 
 def Thrithemus_table(key: str) -> str:

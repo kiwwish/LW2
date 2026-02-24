@@ -1,6 +1,5 @@
 from alphabet import sym2num, num2sym
 
-# Класс для реализации обычного шифра Тритимуса
 class TrithemusCipher:
     def __init__(self, key: str):
         self.key = key.upper()
