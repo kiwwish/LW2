@@ -45,9 +45,9 @@ def pad_MD(s: str, str_size: int) -> str:
 # print(pad_MD(in1, 80))
 
 def macrocompression(s: str, state: str) ->str:
-    out = []
     s = pad_MD(s, 64)
     state = pad_MD(state, 80)
+    out = []
     a = add_txt(s[0:16], state[0:16])
     b = add_txt(s[16:32], state[16:32])
     c = add_txt(s[32:48], state[32:48])
@@ -61,11 +61,12 @@ def macrocompression(s: str, state: str) ->str:
         c = tmp[0]
         d = tmp[1]
         b = block_mask(b, con)
+        a_for_e = a
         a = b
         b = c
         c = d
         d = e
-        e = a
+        e = a_for_e
     out.append(a)
     out.append(b)
     out.append(c)
@@ -102,4 +103,4 @@ def MerDam_hash(msg):
     out = p1 + p2 + p3 + p4
     return out
 
-print(MerDam_hash(s1 + s2))
+# print(MerDam_hash(s1 + s2))
