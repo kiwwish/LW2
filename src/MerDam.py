@@ -6,18 +6,12 @@ def revers_str(s: str) -> str:
     out = array2text(tmp)
     return out
 
-# print(revers_str('свы'))
-
 def blocks_mix(in1: str, in2:str) -> list:
     in1 = revers_str(in1)
     out = []
     out.append(add_txt(in1,in2))
     out.append(sub_txt(in1, in2))
     return out
-
-in1 = 'хорошо_быть_вами'
-in2 = 'кьеркегор_пропал'
-# print(blocks_mix(in1,in2))
 
 def block_mask (s: str, const: str) -> str:
     arr = text2array(s)
@@ -31,8 +25,6 @@ def block_mask (s: str, const: str) -> str:
     out = array2text(out_arr)
     return out
 
-# print(block_mask(in1,in2))
-
 def pad_MD(s: str) -> str:
     out = s
     l = len(s)
@@ -41,10 +33,6 @@ def pad_MD(s: str) -> str:
         for i in range(rem):
             out = out + '_'
     return out
-s1 = 'кьеркегор_пропал'
-s2 = 'хорошо_быть_вами'
-# print(pad_MD(s1 + s2 + s1 + s2 + s1 + s2))
-# print(len(pad_MD(s1 + s2 + s1 + s2 + s1 + s2)))
 
 def macrocompression(s: str, state: str) ->str:
     out = []
@@ -74,12 +62,6 @@ def macrocompression(s: str, state: str) ->str:
     out.append(e)
     return out
 
-s1 = 'кьеркегор_пропал'
-s2 = 'хорошо_быть_вами'
-ins = '_' * 80
-print(macrocompression(pad_MD(s1 + s2), ins))
-# print(macrocompression(pad_MD(s1 + s2 + s1 + s2 + s1 + s2), ins))
-
 def MerDam_hash(msg):
     data = pad_MD(msg)
     n = int(len(data) / 64)
@@ -103,5 +85,13 @@ def MerDam_hash(msg):
     out = p1 + p2 + p3 + p4
     return out
 
-# print(MerDam_hash(s1 + s2)) # пример для входа на 64 символа
-# print(MerDam_hash(s1 + s2 + s1 + s2 + s1 + s2)) # пример для входа на 128 символа
+s1 = 'кьеркегор_пропал'
+s2 = 'хорошо_быть_вами'
+print('Входные строки для внутренниких функций макрокопресии: s1 = ', s1, ' и s2 =', s2, '\n'
+      'Результат перемешивания блоков (функция blocks mix): ', blocks_mix(s1, s2), '\n'
+      'Результат наложения констатны(s2) на блок (s2) (функция block_mask): ', block_mask(s1, s2), '\n'
+      'Результат добовления символа "_" для кратности длины строки 64 (функция pad_MD):\n'
+      '  Стока s1 + s2: ', s1 + s2, ' (длина строки ', len(s1 + s2),')\n'
+      '  Добавление символа "_": ', pad_MD(s1 + s2), '(длина строки ', len(pad_MD(s1 + s2)),')\n'
+      'Результат макрокомпрессии (s1 + s2): ', macrocompression(pad_MD(s1 + s2), ('_' * 80)), '\n'
+      'Результат применения схемы Меркала-Дамгора для хэширования строки (s1 + s2): ', MerDam_hash(s1 + s2))

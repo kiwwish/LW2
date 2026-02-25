@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e818828c-d86a-4446-94f9-988ab0c092c8" name="Changes" comment="Доработка функции добавления &quot;-&quot; в конец строки (pad_MD())">
+    <list default="true" id="e818828c-d86a-4446-94f9-988ab0c092c8" name="Changes" comment="Дорабртка функции block_mask()">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MerDam.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/MerDam.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/functions.py" afterDir="false" />
@@ -183,7 +183,14 @@
       <option name="project" value="LOCAL" />
       <updated>1771999437569</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="Дорабртка функции block_mask()">
+      <created>1772000754687</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1772000754688</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -202,6 +209,7 @@
     <MESSAGE value="LW2" />
     <MESSAGE value="Доработка функции макрокомпрессии (macrocompression)" />
     <MESSAGE value="Доработка функции добавления &quot;-&quot; в конец строки (pad_MD())" />
-    <option name="LAST_COMMIT_MESSAGE" value="Доработка функции добавления &quot;-&quot; в конец строки (pad_MD())" />
+    <MESSAGE value="Дорабртка функции block_mask()" />
+    <option name="LAST_COMMIT_MESSAGE" value="Дорабртка функции block_mask()" />
   </component>
 </project>

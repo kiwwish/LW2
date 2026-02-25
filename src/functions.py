@@ -7,10 +7,6 @@ def core_Tritimus (in_prime: str, in_aux: str) -> str:
         out = cipher.encrypt(in_aux)
     return out
 
-#in1 = 'хорошо_быть_вами'
-#in2 = 'кьеркегор_пропал'
-#print (core_Tritimus(in1,in2))
-
 def confuse (in1: str, in2: str) -> str:
     if len(in1) == 16 & len(in2) == 16:
         arr1 = text2array(in1)
@@ -23,11 +19,6 @@ def confuse (in1: str, in2: str) -> str:
             tmp = array2text(arr1)
             out = add_txt(add_txt(tmp, in1), in2)
     return out
-
-IN = 'хорошо_быть_вами'
-IN1 = 'кьеркегор_пропал'
-IN2 = 'хорошо_пробросил'
-# print(confuse(IN, IN1))
 
 def mixinputs (in_arr):
     in1 = in_arr[0]
@@ -44,9 +35,6 @@ def mixinputs (in_arr):
     out.append(out3)
     out.append(out4)
     return out
-in_arr = ['ток', 'сок', 'мак', 'пар']
-# print(mixinputs(in_arr))
-
 
 def compress (in_16: str, out_n) -> str:
     out = 'Ошибка ввода'
@@ -69,8 +57,6 @@ def compress (in_16: str, out_n) -> str:
     else:
         out = in_16.upper()
     return out
-
-# print(compress(IN,4))
 
 def c_block (in_arr: list, out_size: int) -> str:
     out = 'Ошибка ввода'
@@ -100,5 +86,17 @@ in_arr2 = ['ХОРОШО_БЫТЬ_ВАМИ',
        '________________',
        '________________']
 
-# print(c_block(in_arr1, 16))
-# print(c_block(in_arr1, 8))
+in1 = 'хорошо_быть_вами'
+in2 = 'кьеркегор_пропал'
+print('Входные строки: in1 = ', in1, ' и in2 = ', in2, '\n'
+      'Результат работы полиалфавитного шифра Тритимуса (in1 - входная строка, in2 - ключ): ', core_Tritimus(in1, in2), '\n'
+      'Результат работы функции confuse: ', confuse(in1, in2), '\n'
+      'Результат работы функции comress для in1 до длины 8: ', compress(in1, 8), '\n'
+      'Результат работы функции comress для in2 до длины 4: ', compress(in2, 4), '\n'
+      '\n'
+      'Массивы строк: ', '\n'
+      '   in_arr1 = ', in_arr1, '\n'
+      '   in_arr2 = ', in_arr2, '\n'
+      '\n'
+      'Результат функции сжатия (функция c_block) массива in_arr1 дл строки из 8 символов: ', c_block(in_arr1, 8), '\n'
+      'Результат функции сжатия (функция c_block) массива in_arr2 дл строки из 4 символов: ', c_block(in_arr2, 4))
