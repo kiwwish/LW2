@@ -2,7 +2,7 @@ from polyTritimus import PolyalphabeticTrithemus
 from alphabet import text2array, array2text, add_txt, sub_txt
 def core_Tritimus (in_prime: str, in_aux: str) -> str:
     out = 'Ошибка ввода'
-    if len(in_prime)==16 & len(in_aux)==16:
+    if len(in_prime) == 16 & len(in_aux) == 16:
         cipher = PolyalphabeticTrithemus(in_prime)  # ключ — in_prime
         out = cipher.encrypt(in_aux)
     return out

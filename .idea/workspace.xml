@@ -4,11 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e818828c-d86a-4446-94f9-988ab0c092c8" name="Changes" comment="Добавление тестов">
-      <change afterPath="$PROJECT_DIR$/src/function.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/mg.py" afterDir="false" />
+    <list default="true" id="e818828c-d86a-4446-94f9-988ab0c092c8" name="Changes" comment="Доработка функции макрокомпрессии (macrocompression)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/alphabet.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/alphabet.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/MerDam.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/MerDam.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/functions.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -163,7 +162,21 @@
       <option name="project" value="LOCAL" />
       <updated>1771342156059</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="LW2">
+      <created>1771966136898</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1771966136899</updated>
+    </task>
+    <task id="LOCAL-00014" summary="Доработка функции макрокомпрессии (macrocompression)">
+      <created>1771968571287</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1771968571287</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -179,6 +192,8 @@
     <MESSAGE value="Исправление орфографических ошибок" />
     <MESSAGE value="Добавление файлов из .idea" />
     <MESSAGE value="Добавление тестов" />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавление тестов" />
+    <MESSAGE value="LW2" />
+    <MESSAGE value="Доработка функции макрокомпрессии (macrocompression)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Доработка функции макрокомпрессии (macrocompression)" />
   </component>
 </project>

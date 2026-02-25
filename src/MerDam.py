@@ -33,20 +33,20 @@ def block_mask (s: str, const: str) -> str:
 
 # print(block_mask(in1,in2))
 
-def pad_MD(s: str, str_size: int) -> str:
+def pad_MD(s: str) -> str:
     out = s
     l = len(s)
-    rem = str_size - (l % 64)
-    if rem != str_size:
+    rem = 64 - (l % 64)
+    if rem != 64:
         for i in range(rem):
             out = out + '_'
     return out
-
-# print(pad_MD(in1, 80))
+s1 = 'кьеркегор_пропал'
+s2 = 'хорошо_быть_вами'
+# print(pad_MD(s1 + s2 + s1 + s2 + s1 + s2))
+# print(len(pad_MD(s1 + s2 + s1 + s2 + s1 + s2)))
 
 def macrocompression(s: str, state: str) ->str:
-    s = pad_MD(s, 64)
-    state = pad_MD(state, 80)
     out = []
     a = add_txt(s[0:16], state[0:16])
     b = add_txt(s[16:32], state[16:32])
@@ -76,12 +76,12 @@ def macrocompression(s: str, state: str) ->str:
 
 s1 = 'кьеркегор_пропал'
 s2 = 'хорошо_быть_вами'
-input = s1 + s2
-ins = '_'
-print(macrocompression(input, ins))
+ins = '_' * 80
+# print(macrocompression(pad_MD(s1 + s2), ins))
+# print(macrocompression(pad_MD(s1 + s2 + s1 + s2 + s1 + s2), ins))
 
 def MerDam_hash(msg):
-    data = pad_MD(msg, 64)
+    data = pad_MD(msg)
     n = int(len(data) / 64)
     a = '_' * 16
     b = '_' * 16
@@ -103,4 +103,5 @@ def MerDam_hash(msg):
     out = p1 + p2 + p3 + p4
     return out
 
-# print(MerDam_hash(s1 + s2))
+# print(MerDam_hash(s1 + s2)) # пример для входа на 64 символа
+# print(MerDam_hash(s1 + s2 + s1 + s2 + s1 + s2)) # пример для входа на 128 символа
