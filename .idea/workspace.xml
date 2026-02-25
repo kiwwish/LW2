@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e818828c-d86a-4446-94f9-988ab0c092c8" name="Changes" comment="Доработка функции макрокомпрессии (macrocompression)">
+    <list default="true" id="e818828c-d86a-4446-94f9-988ab0c092c8" name="Changes" comment="Доработка функции добавления &quot;-&quot; в конец строки (pad_MD())">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/MerDam.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/MerDam.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/functions.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/functions.py" afterDir="false" />
@@ -176,7 +176,14 @@
       <option name="project" value="LOCAL" />
       <updated>1771968571287</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Доработка функции добавления &quot;-&quot; в конец строки (pad_MD())">
+      <created>1771999437569</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1771999437569</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -194,6 +201,7 @@
     <MESSAGE value="Добавление тестов" />
     <MESSAGE value="LW2" />
     <MESSAGE value="Доработка функции макрокомпрессии (macrocompression)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Доработка функции макрокомпрессии (macrocompression)" />
+    <MESSAGE value="Доработка функции добавления &quot;-&quot; в конец строки (pad_MD())" />
+    <option name="LAST_COMMIT_MESSAGE" value="Доработка функции добавления &quot;-&quot; в конец строки (pad_MD())" />
   </component>
 </project>

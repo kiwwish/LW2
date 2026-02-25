@@ -101,3 +101,4 @@ in_arr2 = ['ХОРОШО_БЫТЬ_ВАМИ',
        '________________']
 
 # print(c_block(in_arr1, 16))
+# print(c_block(in_arr1, 8))

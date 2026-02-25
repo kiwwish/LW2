@@ -27,7 +27,7 @@ def block_mask (s: str, const: str) -> str:
         if arr[i] < (con[i] + i):
             out_arr[i] = (64 - (con[i] - i)) % 32
         else:
-            out_arr[i] = (arr[i] - i) % 32
+            out_arr[i] = (arr[i] + i) % 32
     out = array2text(out_arr)
     return out
 
@@ -77,7 +77,7 @@ def macrocompression(s: str, state: str) ->str:
 s1 = 'кьеркегор_пропал'
 s2 = 'хорошо_быть_вами'
 ins = '_' * 80
-# print(macrocompression(pad_MD(s1 + s2), ins))
+print(macrocompression(pad_MD(s1 + s2), ins))
 # print(macrocompression(pad_MD(s1 + s2 + s1 + s2 + s1 + s2), ins))
 
 def MerDam_hash(msg):
@@ -89,7 +89,7 @@ def MerDam_hash(msg):
     d = '_' * 16
     e = '_' * 16
     for i in range(n):
-        tmp = data[64*i:64]
+        tmp = data[64*i:64*(i+1)]
         state = macrocompression(tmp, (a + b + c + d + e))
         a = state[0]
         b = state[1]
