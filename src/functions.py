@@ -2,22 +2,31 @@ from polyTritimus import PolyalphabeticTrithemus
 from alphabet import text2array, array2text, add_txt, sub_txt
 def core_Tritimus (in_prime: str, in_aux: str) -> str:
     out = 'Ошибка ввода'
-    if len(in_prime) == 16 & len(in_aux) == 16:
+    if len(in_prime) == 16 and len(in_aux) == 16:
         cipher = PolyalphabeticTrithemus(in_prime)  # ключ — in_prime
         out = cipher.encrypt(in_aux)
     return out
 
-def confuse (in1: str, in2: str) -> str:
-    if len(in1) == 16 & len(in2) == 16:
+def confuse(in1: str, in2: str) -> str:
+
+    out = 'Ошибка ввода'
+
+    if len(in1) == 16 and len(in2) == 16:
+
         arr1 = text2array(in1)
         arr2 = text2array(in2)
+
         for i in range(16):
+
             if arr1[i] > arr2[i]:
-                arr1[i] = (arr1[i]+i) % 32
+                arr1[i] = (arr1[i] + i) % 32
             else:
                 arr1[i] = (arr2[i] + i) % 32
-            tmp = array2text(arr1)
-            out = add_txt(add_txt(tmp, in1), in2)
+
+        tmp = array2text(arr1)
+
+        out = add_txt(add_txt(tmp, in1), in2)
+
     return out
 
 def mixinputs (in_arr):
@@ -80,23 +89,23 @@ def c_block (in_arr: list, out_size: int) -> str:
         out = compress(out, out_size)
     return out
 
-in_arr1 = ['ХОРОШО_БЫТЬ_ВАМИ']
-in_arr2 = ['ХОРОШО_БЫТЬ_ВАМИ',
-       '________________',
-       '________________',
-       '________________']
+#in_arr1 = ['ХОРОШО_БЫТЬ_ВАМИ']
+#in_arr2 = ['ХОРОШО_БЫТЬ_ВАМИ',
+ #      '________________',
+  #     '________________',
+   #    '________________']
 
-in1 = 'хорошо_быть_вами'
-in2 = 'кьеркегор_пропал'
-print('Входные строки: in1 = ', in1, ' и in2 = ', in2, '\n'
-      'Результат работы полиалфавитного шифра Тритимуса (in1 - входная строка, in2 - ключ): ', core_Tritimus(in1, in2), '\n'
-      'Результат работы функции confuse: ', confuse(in1, in2), '\n'
-      'Результат работы функции comress для in1 до длины 8: ', compress(in1, 8), '\n'
-      'Результат работы функции comress для in2 до длины 4: ', compress(in2, 4), '\n'
-      '\n'
-      'Массивы строк: ', '\n'
-      '   in_arr1 = ', in_arr1, '\n'
-      '   in_arr2 = ', in_arr2, '\n'
-      '\n'
-      'Результат функции сжатия (функция c_block) массива in_arr1 дл строки из 8 символов: ', c_block(in_arr1, 8), '\n'
-      'Результат функции сжатия (функция c_block) массива in_arr2 дл строки из 4 символов: ', c_block(in_arr2, 4))
+#in1 = 'хорошо_быть_вами'
+#in2 = 'кьеркегор_пропал'
+#print('Входные строки: in1 = ', in1, ' и in2 = ', in2, '\n'
+ #     'Результат работы полиалфавитного шифра Тритимуса (in1 - входная строка, in2 - ключ): ', core_Tritimus(in1, in2), '\n'
+ #     'Результат работы функции confuse: ', confuse(in1, in2), '\n'
+#      'Результат работы функции comress для in1 до длины 8: ', compress(in1, 8), '\n'
+#      'Результат работы функции comress для in2 до длины 4: ', compress(in2, 4), '\n'
+#      '\n'
+#      'Массивы строк: ', '\n'
+ #     '   in_arr1 = ', in_arr1, '\n'
+  #    '   in_arr2 = ', in_arr2, '\n'
+   #   '\n'
+    #  'Результат функции сжатия (функция c_block) массива in_arr1 дл строки из 8 символов: ', c_block(in_arr1, 8), '\n'
+     # 'Результат функции сжатия (функция c_block) массива in_arr2 дл строки из 4 символов: ', c_block(in_arr2, 4))
