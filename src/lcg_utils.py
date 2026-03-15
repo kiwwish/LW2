@@ -86,10 +86,10 @@ def compose_num(num1_in: int, num2_in: int, cont_in: int) -> int:
 
     arr = [0] * 20
     for i in range(20):
-        # Логика выбора бита (если control=1 -> first, else second)
-        if arr3[i] == 1:
-            arr[i] = arr1[i]
-        else:
-            arr[i] = arr2[i]
+        # term1: если control=0 -> first
+        term1 = arr2[i] * ((1 + arr3[i]) % 2)
+        # term2: если control=1 -> second
+        term2 = arr1[i] * arr3[i]
+        arr[i] = term1 + term2
 
     return bin2dec(arr)
