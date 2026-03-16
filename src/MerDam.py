@@ -6,12 +6,18 @@ def revers_str(s: str) -> str:
     out = array2text(tmp)
     return out
 
+# print(revers_str('свы'))
+
 def blocks_mix(in1: str, in2:str) -> list:
     in1 = revers_str(in1)
     out = []
     out.append(add_txt(in1,in2))
     out.append(sub_txt(in1, in2))
     return out
+
+in1 = 'хорошо_быть_вами'
+in2 = 'кьеркегор_пропал'
+# print(blocks_mix(in1,in2))
 
 def block_mask (s: str, const: str) -> str:
     arr = text2array(s)
@@ -21,21 +27,27 @@ def block_mask (s: str, const: str) -> str:
         if arr[i] < (con[i] + i):
             out_arr[i] = (64 - (con[i] - i)) % 32
         else:
-            out_arr[i] = (arr[i] + i) % 32
+            out_arr[i] = (arr[i] - i) % 32
     out = array2text(out_arr)
     return out
 
-def pad_MD(s: str) -> str:
+# print(block_mask(in1,in2))
+
+def pad_MD(s: str, str_size: int) -> str:
     out = s
     l = len(s)
-    rem = 64 - (l % 64)
-    if rem != 64:
+    rem = str_size - (l % 64)
+    if rem != str_size:
         for i in range(rem):
             out = out + '_'
     return out
 
+# print(pad_MD(in1, 80))
+
 def macrocompression(s: str, state: str) ->str:
     out = []
+    s = pad_MD(s, 64)
+    state = pad_MD(state, 80)
     a = add_txt(s[0:16], state[0:16])
     b = add_txt(s[16:32], state[16:32])
     c = add_txt(s[32:48], state[32:48])
@@ -49,12 +61,11 @@ def macrocompression(s: str, state: str) ->str:
         c = tmp[0]
         d = tmp[1]
         b = block_mask(b, con)
-        a_for_e = a
         a = b
         b = c
         c = d
         d = e
-        e = a_for_e
+        e = a
     out.append(a)
     out.append(b)
     out.append(c)
@@ -62,8 +73,14 @@ def macrocompression(s: str, state: str) ->str:
     out.append(e)
     return out
 
+s1 = 'кьеркегор_пропал'
+s2 = 'хорошо_быть_вами'
+input = s1 + s2
+ins = '_'
+print(macrocompression(input, ins))
+
 def MerDam_hash(msg):
-    data = pad_MD(msg)
+    data = pad_MD(msg, 64)
     n = int(len(data) / 64)
     a = '_' * 16
     b = '_' * 16
@@ -71,7 +88,7 @@ def MerDam_hash(msg):
     d = '_' * 16
     e = '_' * 16
     for i in range(n):
-        tmp = data[64*i:64*(i+1)]
+        tmp = data[64*i:64]
         state = macrocompression(tmp, (a + b + c + d + e))
         a = state[0]
         b = state[1]
@@ -85,13 +102,4 @@ def MerDam_hash(msg):
     out = p1 + p2 + p3 + p4
     return out
 
-s1 = 'кьеркегор_пропал'
-s2 = 'хорошо_быть_вами'
-print('Входные строки для внутренниких функций макрокопресии: s1 = ', s1, ' и s2 =', s2, '\n'
-      'Результат перемешивания блоков (функция blocks mix): ', blocks_mix(s1, s2), '\n'
-      'Результат наложения констатны(s2) на блок (s2) (функция block_mask): ', block_mask(s1, s2), '\n'
-      'Результат добовления символа "_" для кратности длины строки 64 (функция pad_MD):\n'
-      '  Стока s1 + s2: ', s1 + s2, ' (длина строки ', len(s1 + s2),')\n'
-      '  Добавление символа "_": ', pad_MD(s1 + s2), '(длина строки ', len(pad_MD(s1 + s2)),')\n'
-      'Результат макрокомпрессии (s1 + s2): ', macrocompression(pad_MD(s1 + s2), ('_' * 80)), '\n'
-      'Результат применения схемы Меркала-Дамгора для хэширования строки (s1 + s2): ', MerDam_hash(s1 + s2))
+print(MerDam_hash(s1 + s2))

@@ -14,18 +14,18 @@ class CompositeLCG:
     """
     Обёртка над 4 CT-LCG генераторами.
     Интерфейс: generate(input_data) -> str (16 символов).
+    Реализация строго по формуле C_CT_LCG_next из приложения (слайд 41).
     """
 
-    # Наборы коэффициентов ИЗ СЛАЙДА 42 (таблица CHCLCG_set)
-    # set0, set1, set2
+    # Наборы коэффициентов ИЗ ПРИЛОЖЕНИЯ (слайд 43)
     SETS = [
-        # set1 (Первый CT-LCG) -> это SET_0
+        # set1
         [(252564, 9109, 961193), (252564, 9109, 961193), (723482, 8677, 983609)],
-        # set2 (Второй CT-LCG) -> это SET_1
+        # set2
         [(51190, 7927, 990711), (51190, 7927, 990711), (549234, 6949, 939683)],
-        # set3 (Третий CT-LCG) -> это SET_2
+        # set3
         [(227796, 5107, 981875), (227796, 5107, 981875), (167490, 9871, 809137)],
-        # set4 (Четвертый CT-LCG) -> это SET_3
+        # set4
         [(357630, 8971, 948209), (357630, 8971, 948209), (73335, 6779, 1014784)]
     ]
 
@@ -36,31 +36,48 @@ class CompositeLCG:
 
     def generate(self, input_data: str = "") -> str:
         """
-        :param input_data: Seed (16 символов) для инициализации ИЛИ пустая строка "" для продолжения.
-        :return: Строка из 16 символов (80 бит).
+        Реализация C_CT_LCG_next по формуле со слайда 41.
+        Каждый вызов возвращает 16 символов (4 блока по 4 символа).
         """
+        if not self.initialized:
+            if len(input_data) != 16:
+                raise ValueError("Первый вызов требует seed из 16 символов")
 
-        # --- РЕЖИМ "UP": ИНИЦИАЛИЗАЦИЯ ---
-        if not self.initialized and len(input_data) == 16:
-            print(f"[Init] Запуск инициализации...")
-
+            print("[Init] Запуск инициализации...")
             init_data = initialize_PRNG(input_data, self.cipher_core)
 
-            for i in range(4):
-                params = self.SETS[i]
-                self.generators.append(CTLCG(init_data[i], params))
+            for i, seed in enumerate(init_data):
+                if len(seed) != 12:
+                    raise ValueError(f"Сид {i} имеет длину {len(seed)}, ожидалось 12")
+                self.generators.append(CTLCG(seed, self.SETS[i]))
 
             self.initialized = True
+            return self.generate("")  # сразу первый полезный блок
 
-        elif not self.initialized:
-            raise ValueError("Для первого вызова необходимо передать seed из 16 символов.")
-
-        # --- РЕЖИМ "DOWN": ПРОДОЛЖЕНИЕ (Простая конкатенация) ---
+        # ─── Основной цикл: 4 блока по 4 символа ─────────────────────────────
         stream = ""
+        MOD = 1048576
 
-        for gen in self.generators:
-            st, of = gen.generate()
-            stream += of
+        for block_idx in range(4):
+
+            tmp = 0
+            sign = 1
+
+            for gen_idx, gen in enumerate(self.generators):
+
+                state, out = gen.generate()
+
+                if isinstance(out, str):
+                    value = block2num(out)
+                else:
+                    value = out
+
+                tmp = (tmp + sign * value) % MOD
+                sign = -sign
+
+            block = num2block(tmp)
+
+            stream += block
 
         return stream
 
@@ -74,7 +91,10 @@ if __name__ == "__main__":
     seed = "АБВГДЕЖЗИЙКЛМНОП"
 
     res1 = comp.generate(seed)
-    print(f"Step 1 (Init): {res1}")
+    print(f"Step 1 (Init) : {res1}")
 
     res2 = comp.generate("")
-    print(f"Step 2 (Cont): {res2}")
+    print(f"Step 2 : {res2}")
+
+    res3 = comp.generate("")
+    print(f"Step 3 : {res3}")

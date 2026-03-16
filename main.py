@@ -136,14 +136,143 @@ def test_final_check_mathcad():
         traceback.print_exc()
 
 
+# main.py
+
+def test_prng_examples_trithemus():
+
+    from prng_init import initialize_PRNG
+    from functions import c_block
+
+    print("\n" + "=" * 60)
+    print("ТЕСТ ПРИМЕРОВ ИЗ МЕТОДИЧКИ (core_Tritemus)")
+    print("=" * 60)
+
+    IN1 = "ХОРОШО_БЫТЬ_ВАМИ"
+    IN2 = "________________"
+    IN3 = "ХОРОШО_ВЫТЬ_ВАМИ"
+    IN4 = "___А____________"
+
+    seeds = [IN1, IN2, IN3, IN4]
+
+    for seed in seeds:
+
+        print(f"\n--- Seed: '{seed}' ---")
+
+        result = initialize_PRNG(seed, c_block)
+
+        print("Полученный результат:")
+
+        for line in result:
+            print(line)
+
+
+def test_c_block_examples_final():
+    from functions import c_block, core_Tritimus
+
+    # Точные примеры из методички (слайд с IN1...IN9)
+
+    # IN1
+    inp_IN1 = ("ХОРОШО_БЫТЬ_ВАМИ",)
+    exp_IN1_16 = "ОВПВР_ЗШЛНУИНПЮД"
+    exp_IN1_8 = "_ВЧЬЩЮСН"
+
+    # IN2
+    inp_IN2 = ("ХОРОШО_БЫТЬ_ВАМИ", "________________", "________________", "________________")
+    exp_IN2_16 = "ОВПВР_ЗШЛНУИНПЮД"
+    exp_IN2_8 = "_ВЧЬЩЮСН"
+
+    # IN3
+    inp_IN3 = ("ХОРОШО_БЫТЬ_ВАМИ", "________А_______")
+    exp_IN3_16 = "О_ТСР_ПКЬНГФНТХА"
+    exp_IN3_8 = "__ВЭЙАЩХ"
+
+    # IN4
+    inp_IN4 = ("ХОРОШО_БЫТЬ_ВАМИ", "___А____________")
+    exp_IN4_16 = "ЧИШФЮ_АНЬОУЬОШЦД"
+    exp_IN4_8 = "ХИЩВКЗКА"
+
+    # IN5
+    inp_IN5 = ("ХОРОШО_БЫТЬ_ВАМИ", "КЬЕРКЕГОР_ПРОПАЛ")
+    exp_IN5_16 = "ШЦЗЫБЖЩСЧПСЙЕУО"
+    exp_IN5_8 = "ФСБМБЕГА"
+
+    # IN6
+    inp_IN6 = ("ЧЕРНЫЙ_АББАТ_ПОЛ", "ХОРОШО_БЫТЬ_ВАМИ", "КЬЕРКЕГОР_ПРОПАЛ")
+    exp_IN6_16 = "ЙЖЭБИЛЖЬВЙЦГБУЖ"
+    exp_IN6_8 = "ТТГЮЖБЮЮ"
+
+    # IN7
+    inp_IN7 = ("__A___________", "________________", "________________", "________________")
+    exp_IN7_16 = "ОРСЗДЫЖШАЭХЛФИЖР"
+    exp_IN7_8 = "УЛШАУЕЭЭ"
+
+    # IN8
+    inp_IN8 = ("________________", "________________", "________________", "________________")
+    exp_IN8_16 = "РЗФВЛЫУЩ_ЯХМДЙЧР"
+    exp_IN8_8 = "ЭВИЭДИНЮ"
+
+    # IN9
+    inp_IN9 = ("__A___________--", "________________", "__A_____________", "________________")
+    exp_IN9_16 = "ЦШЮЬЗЩШТЯБХЦЛЖЮЮ"
+    exp_IN9_8 = "ЯТЦОКИУФ"
+
+    print("\n--- ФИНАЛЬНЫЙ ТЕСТ ФУНКЦИИ C_BLOCK (по методичке) ---\n")
+
+    all_passed = True
+
+    tests = [
+        ("IN1", inp_IN1, exp_IN1_16, exp_IN1_8),
+        ("IN2", inp_IN2, exp_IN2_16, exp_IN2_8),
+        ("IN3", inp_IN3, exp_IN3_16, exp_IN3_8),
+        ("IN4", inp_IN4, exp_IN4_16, exp_IN4_8),
+        ("IN5", inp_IN5, exp_IN5_16, exp_IN5_8),
+        ("IN6", inp_IN6, exp_IN6_16, exp_IN6_8),
+        ("IN7", inp_IN7, exp_IN7_16, exp_IN7_8),
+        ("IN8", inp_IN8, exp_IN8_16, exp_IN8_8),
+        ("IN9", inp_IN9, exp_IN9_16, exp_IN9_8),
+    ]
+
+    for name, inp, exp_16, exp_8 in tests:
+        inp_list = list(inp)
+
+        result_16 = c_block(inp_list, 16)
+        match_16 = result_16 == exp_16
+
+        result_8 = c_block(inp_list, 8)
+        match_8 = result_8 == exp_8
+
+        status_16 = "✅" if match_16 else "❌"
+        status_8 = "✅" if match_8 else "❌"
+
+        print(f"{name}:")
+        print(f"  Expected (16): {exp_16} | Got:      {result_16} | {status_16}")
+        print(f"  Expected (8):  {exp_8}    Got:      {result_8}  | {status_8}")
+
+        if not (match_16 and match_8):
+            all_passed = False
+
+        print("-" * 60)
+
+    print("\n" + "=" * 60)
+    if all_passed:
+        print("🎉 ВСЕ ТЕСТЫ ПРОЙДЕНЫ! Функция c_block работает идеально.")
+    else:
+        print("⚠️ ОБНАРУЖЕНЫ РАЗЛИЧИЯ. Проверьте логику add_txt или mixinputs.")
+    print("=" * 60)
+
+
+# Вызов теста
+
 if __name__ == "__main__":
     # Запускаем все тесты последовательно
     if not verify_alphabet():
         print("Ошибка проверки алфавита!")
     else:
-        test_lcg()
-        test_ct_lcg()
-        test_composite()
-        test_final_check_mathcad()
+       #test_lcg()
+       #test_ct_lcg()
+       #test_composite()
+       # test_final_check_mathcad()
+
+      test_prng_examples_trithemus()
 
     input("\nНажмите Enter для выхода...")

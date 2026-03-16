@@ -228,4 +228,3 @@ class EnhancedSTrithemus:
         out = EnhancedSTrithemus.frw_merge_block(tmp2, key)
 
         return out
-
