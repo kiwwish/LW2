@@ -64,30 +64,40 @@ def test_composite():
     print("\n--- Тест Композиционного генератора (C-CT-LCG) ---")
 
     seed = "АБВГДЕЖЗИЙКЛМНОП"
+    expected_first_output = "_Н_БОДП_ЮЦЛИУЯИ"  # Ожидаемый результат из методички
 
     try:
-        # 1. Создаем объект ТОЛЬКО с функцией шифрования
         composite = CompositeLCG(c_block)
         print(f"Seed: {seed}")
 
-        # 2. Первый шаг: ИНИЦИАЛИЗАЦИЯ (передаем seed)
         res1 = composite.generate(seed)
         print(f"Step 1 (Init):     Output={res1} (длина={len(res1)})")
 
         if len(res1) != 16:
-            print(f"  Ошибка: Длина вывода должна быть 16, получено {len(res1)}")
+            print(f"  ❌ Ошибка: Длина вывода должна быть 16, получено {len(res1)}")
+            return
 
-        # 3. Следующие шаги: ПРОДОЛЖЕНИЕ (передаем пустую строку)
+        if res1 == expected_first_output:
+            print(f"  ✅ Результат совпадает с эталоном: {expected_first_output}")
+        else:
+            print(f"  ⚠️ Внимание: Результат не совпадает!")
+            print(f"      Ожидалось: {expected_first_output}")
+            print(f"      Получено:  {res1}")
+
         for i in range(4):
             res = composite.generate("")
             step_num = i + 2
             print(f"Step {step_num}:   Output={res} (длина={len(res)})")
 
             if len(res) != 16:
-                print(f"  Ошибка: Длина вывода должна быть 16, получено {len(res)}")
+                print(f"  ❌ Ошибка: Длина вывода должна быть 16, получено {len(res)}")
 
     except Exception as e:
-        print(f"Ошибка: {e}")
+        print(f"❌ Критическая ошибка: {e}")
+        import traceback
+        traceback.print_exc()
+
+
 
 
 def test_final_check_mathcad():

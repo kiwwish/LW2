@@ -1,23 +1,21 @@
 from alphabet import text2array, array2text
 
+from alphabet import text2array, array2text
+
+
 def block2num(BLOCK_IN: str) -> int:
     """
-    Преобразование блока текста из 4-х символов в целое положительное число.
-    :param BLOCK_IN: Строка из 4 символов.
-    :return: Целое число (20 бит).
-    :raises ValueError: Если длина строки не равна 4.
+    Реализация строго по Mathcad:
+    Цикл for i from 3 down to 0.
     """
-    # Проверка типа данных и длины
-    if not isinstance(BLOCK_IN, str):
-        raise ValueError(f"Ожидалась строка, получено: {type(BLOCK_IN)}")
-
     if len(BLOCK_IN) != 4:
-        raise ValueError(f"Ошибка: блок должен содержать ровно 4 символа, получено: {len(BLOCK_IN)}")
+        return "input_error"  # Как в методичке
 
     tmp = text2array(BLOCK_IN)
     out = 0
     pos = 1
 
+    # В методичке: for i in 3, 2 .. 0
     for i in range(3, -1, -1):
         out = pos * tmp[i] + out
         pos = 32 * pos
@@ -27,18 +25,36 @@ def block2num(BLOCK_IN: str) -> int:
 
 def num2block(num_in: int) -> str:
     """
-    Преобразование целого числа в блок из 4-х символов.
+    Реализация строго по Mathcad:
+    Запись в tmp[3-i].
     """
-    # Гарантируем диапазон 20 бит
-    rem = num_in % (1 << 20)
+    rem = num_in
     tmp = [0] * 4
 
-    # Цикл for i in 0..3
+    # В методичке: for i in 0, 1 .. 3
     for i in range(4):
         tmp[3 - i] = rem % 32
-        rem = rem // 32
+        rem = rem // 32  # аналог trunc(num/den)
 
     return array2text(tmp)
+
+
+# Тесты из методички
+if __name__ == "__main__":
+    test_cases = [
+        ("АБВГ", 34916),
+        ("_ЯЗЬ", 32028),
+        ("ЯЯЯЯ", 1048575)
+    ]
+
+    print("--- ТЕСТИРОВАНИЕ ПО МЕТОДИЧКЕ ---")
+    for block_str, expected_num in test_cases:
+        res_num = block2num(block_str)
+        res_block = num2block(expected_num)
+
+        print(f"Блок: {block_str} -> Число: {res_num} (Ожидалось: {expected_num})")
+        print(f"Число: {expected_num} -> Блок: {res_block} (Ожидалось: {block_str})")
+        print("-" * 30)
 
 
 # src/lcg_utils.py
@@ -55,11 +71,11 @@ def dec2bin(num_in: int) -> list[int]:
 
     # Заполняем массив С НАЧАЛА (индекс 0 — младший бит)
     for i in range(20):
-        out[i] = rem % 2
+        out[19-i] = rem % 2
         rem = rem // 2
 
     return out
-
+#print(dec2bin(34916))
 
 def bin2dec(BIN_IN: list[int]) -> int:
     """
@@ -68,13 +84,12 @@ def bin2dec(BIN_IN: list[int]) -> int:
     """
     out = 0
     for i in range(20):
-        # Если индекс 0, умножаем на 2^0, если 19, то на 2^19
-        # Формула: out += bit * 2^i
-        out += BIN_IN[i] * (2 ** i)
+        out = 2 * out + BIN_IN[i]
 
     return out
 
 
+#print(bin2dec([0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0]))
 # src/lcg_utils.py
 
 # src/lcg_utils.py
@@ -93,3 +108,12 @@ def compose_num(num1_in: int, num2_in: int, cont_in: int) -> int:
         arr[i] = term1 + term2
 
     return bin2dec(arr)
+#print(compose_num(1231,723482,448033))
+
+def seed2nums(ARRAY_IN: list[str]) -> list[int]:
+    """Преобразование массива строк в массив чисел. Слайд 'seed2nums'."""
+    out = [0] * len(ARRAY_IN)
+    for i in range(len(ARRAY_IN)):
+        out[i] = block2num(ARRAY_IN[i])
+    return out
+#print(seed2nums(["АПЧХ","ЧПОК","ШУРА"]))
