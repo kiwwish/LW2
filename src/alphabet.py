@@ -111,3 +111,4 @@ def array2text(arr: list) -> str:
     return ''.join(num2sym(num) for num in arr)
 
 
+#kzkz
