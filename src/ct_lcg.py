@@ -1,54 +1,56 @@
-# src/ct_lcg.py
-import sys
-import os
-current_dir = os.path.dirname(os.path.abspath(__file__))
-sys.path.insert(0, current_dir)
-
-from lcg_utils import block2num, num2block, compose_num
-from lcg_generator import LCGGenerator
+from prng_init import initialize_PRNG
+from lcg_generator import ct_lcg_next
+from lcg_utils import seed2num, num2block
 
 
-class CTLCG:
-    """
-    LCG с манипулируемым усечением (CT-LCG).
-    Принимает seed и наборы коэффициентов.
-    """
+def wrap_ct_clcg_next(flag: str, STATE, SEED, SET: list):
 
-    def __init__(self, seed_str: str, sets: list[tuple[int, int, int]]):
-        """
-        :param seed_str: Начальное состояние (12 символов: 3 блока по 4)
-        :param sets: Список из 3 кортежей (a, c, m) для каждого внутреннего LCG
-        """
-        if len(seed_str) != 12:
-            raise ValueError("Seed должен быть 12 символов (3 блока)")
-        if len(sets) != 3:
-            raise ValueError("Нужно передать 3 набора коэффициентов")
+    out = 'something_wrong'
 
-        s1, s2, s3 = seed_str[0:4], seed_str[4:8], seed_str[8:12]
+    stream = ''
 
-        # Создаем 3 LCG с переданными параметрами
-        self.lcg_first = LCGGenerator(s1, sets[0])
-        self.lcg_second = LCGGenerator(s2, sets[1])
-        self.lcg_control = LCGGenerator(s3, sets[2])
+    check = 0
 
-        # Сохраняем текущие численные состояния
-        self.state_first = self.lcg_first.state
-        self.state_second = self.lcg_second.state
-        self.state_control = self.lcg_control.state
+    if flag == 'up':
 
-    def generate(self) -> tuple[str, str]:
-        _, out_first = self.lcg_first.generate()
-        _, out_second = self.lcg_second.generate()
-        _, out_control = self.lcg_control.generate()
+        init = initialize_PRNG(SEED)
 
-        self.state_first = block2num(out_first)
-        self.state_second = block2num(out_second)
-        self.state_control = block2num(out_control)
+        state = []
 
-        composed_num = compose_num(self.state_first, self.state_second, self.state_control)
-        outflow_str = num2block(composed_num)
+        for i in range(4):
 
-        new_state_str = out_first + out_second + out_control
+            state_i = seed2num([init[i][0:4], init[i][4:8], init[i][8:12]])
 
-        return new_state_str, outflow_str
+            state.append(state_i)
 
+            check = 1
+
+    elif flag == 'down':
+
+        state = STATE
+
+        check = 1
+
+    if check == 1:
+
+        for j in range(4):
+
+            tmp = 0
+
+            sign = 1
+
+            for i in range(4):
+
+                T = ct_lcg_next(state[i], SET[j])
+
+                state[i] = T[1]
+
+                tmp = (1048576 + sign * T[0] + tmp) % 1048576
+
+                sign = 0 - sign
+
+            stream = stream + num2block(tmp)
+
+        out = [stream, state]
+
+    return out

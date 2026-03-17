@@ -1,30 +1,58 @@
-from lcg_utils import block2num, num2block, compose_num
+from lcg_utils import compose_num
 
 
-class LCGGenerator:
-    def __init__(self, seed_str: str, COEFS_IN: tuple[int, int, int]):
-        """
-        :param seed_str: Начальное состояние (4 символа)
-        :param COEFS_IN: Вектор коэффициентов [a, c, m] (как в Mathcad)
-        """
-        if len(COEFS_IN) != 3:
-            raise ValueError("Коэффициенты должны быть кортежем из 3 чисел: (a, c, m)")
+def make_coeffs(bpr_in: list, spr_in: list, pow_in: int):
 
-        self.COEF = COEFS_IN
+    ss = min(spr_in)
+    bs = min(bpr_in)
+    bb = max(bpr_in)
+    sb = max(spr_in)
 
-        self.state = block2num(seed_str)
+    MAX = 2 ** (pow_in) - 1
 
-    def generate(self) -> tuple[str, str]:
-        # Распаковка вектора внутри метода
-        a, c, m = self.COEF
+    tmp = bs * ss
 
-        # Формула: out = mod(a * state_in + c, m)
-        next_val = (a * self.state + c) % m
-        self.state = next_val
+    a = ss * bs * sb + 1
+    c = bb
 
-        new_state_str = num2block(next_val)
-        outflow_str = new_state_str
+    for i in range(pow_in):
 
-        return new_state_str, outflow_str
+        if tmp * ss >= MAX:
+            break
+
+        else:
+            tmp = tmp * ss
+
+    m = tmp
+
+    if (a < m) and (c < m):
+        out = [a, c, m]
+
+    else:
+        out = 'wrong_guess'
+
+    return out
 
 
+def lcg_next(state_in: int, coefs_in: list):
+
+    a = coefs_in[0]
+    c = coefs_in[1]
+    m = coefs_in[2]
+
+    out = (a * state_in + c) % m
+
+    return out
+
+
+def ct_lcg_next(sate_in: list, set_in: list):
+
+    first = lcg_next(sate_in[0], set_in[0])
+    second = lcg_next(sate_in[1], set_in[1])
+    control = lcg_next(sate_in[2], set_in[2])
+
+    out = compose_num(first, second, control)
+
+    state_out = [first, second, control]
+
+    return [out, state_out]
