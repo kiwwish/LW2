@@ -5,7 +5,8 @@ import os
 src_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'src')
 sys.path.insert(0, src_dir)
 
-from ct_lcg import wrap_ct_clcg_next
+from ct_lcg import c_ct_lcg_next
+
 
 # Наборы коэффициентов (из методички)
 
@@ -58,7 +59,7 @@ seed = 'АБВГДЕЖЗИЙКЛМНОП'
 
 
 # первый запуск генератора
-result = wrap_ct_clcg_next("up", -1, seed, SET)
+result = c_ct_lcg_next("up", -1, seed, SET)
 
 all_outputs = []
 all_outputs.append(result[0])
@@ -69,7 +70,7 @@ current_state = result[1]
 # генерируем ещё 8 блоков
 for i in range(8):
 
-    result = wrap_ct_clcg_next("down", current_state, -1, SET)
+    result = c_ct_lcg_next("down", current_state, -1, SET)
 
     all_outputs.append(result[0])
 

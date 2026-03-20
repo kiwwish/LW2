@@ -1,6 +1,5 @@
 from functions import c_block
 from alphabet import add_txt
-from lcg_utils import seed2num
 
 
 def initialize_PRNG(Seed_in: str) -> list:
@@ -44,3 +43,4 @@ def initialize_PRNG(Seed_in: str) -> list:
         OUT.append(out_i)
 
     return OUT
+
