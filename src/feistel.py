@@ -13,7 +13,10 @@ def frw_routine_Feistel(block: str, key: str) -> str:
 in1 = 'ГОР_СВЕТ'
 in2 = 'ЕГОР_КОТ'
 key = 'ЗОЛОТУХА_ПИКЕТКА'
-#print(frw_routine_Feistel(in2, key))
+print()
+print('Блок 1: ГОР_СВЕТ; блок 2: ЕГОР_КОТ; ключ: ЗОЛОТУХА_ПИКЕТКА')
+print('Результат функции, описывающей одиночную петлю Фейстеля: ', frw_routine_Feistel(in2, key), '\n'
+      )
 out1 = frw_routine_Feistel(in1, key)
 out2 = frw_routine_Feistel(in2, key)
 
@@ -57,13 +60,17 @@ def swap_blocks(block: str) -> str:
     right = block[8:]
     return right + left
 
-"""in_1 = 'КОРЫСТЬ_СЛОНА_ЭХ'
+in_1 = 'КОРЫСТЬ_СЛОНА_ЭХ'
 in_2 = 'НУЖНО_БОЛЬШЕ_ПЫЩ'
 key_1 = 'МТВ_ВСЕ_ЕЩЕ_ТЛЕН'
 out1l = round_Feistel(in_1, key_1)
 out2l = round_Feistel(in_2, key_1)
 tmp1l = swap_blocks(out1l)
 tmp2l = swap_blocks(out2l)
-print(out1l, out2l)
-print(tmp1l, tmp2l)
-"""
+#print(out1l, out2l)
+#print(tmp1l, tmp2l)
+
+
+print('Блок 1: "КОРЫСТЬ_СЛОНА_ЭХ"; блок 2: "НУЖНО_БОЛЬШЕ_ПЫЩ", ключ: "МТВ_ВСЕ_ЕЩЕ_ТЛЕН"')
+print('Результа применения обёртки, которая реализует раунд петли Фейстеля для блоков 1 и 2:', round_Feistel(in_1, key_1), ', ', round_Feistel(in_2, key_1))
+
