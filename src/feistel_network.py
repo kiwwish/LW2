@@ -75,6 +75,7 @@ SET.append(SET1)
 SET.append(SET2)
 SET.append(SET3)
 
+"""
 print()
 print('Новые раундовые ключи:')
 keys1 = produce_round_keys(key_s, 6, SET)
@@ -82,3 +83,4 @@ for i, out_str in enumerate(keys1):
     print(f"  Ключ {i+1}: {out_str}")
 print()
 print('Применение многораундного алгоритма с числом раундов 1 и 4:', frw_Feistel(s1, keys1, 1), ', ', frw_Feistel(s2, keys1, 4))
+"""

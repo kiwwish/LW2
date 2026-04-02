@@ -71,7 +71,7 @@ def block_xor(block_a: str, block_b: str) -> str:
         out = out + subblocks_xor(tmpA, tmpB)
     return out
 
-
+"""
 inA = 'АГАТ'
 inB = 'ТАГА'
 keys1 = produce_round_keys(key1, 6, SET)
@@ -82,6 +82,6 @@ for i, out_str in enumerate(keys1):
     print(f"  Ключ {i+1}: {out_str}")
 print('\n'
       'Результат перестановки "скитала" для блока "ДЖИГУРДА": ', frw_P_scitala('ДЖИГУРДА'))
-
+"""
 
 
