@@ -3,8 +3,9 @@ from alphabet import num2sym, add_txt, sym2num
 from lcg_utils import dec2bin, block2num, bin2dec, num2block
 from feistel_network import frw_Feistel, SET
 from ct_lcg import produce_round_keys
+from functions import c_block
 
-def kdf(mat: str, salt: str, con: list[str], size: list[int], iter: int) -> list:
+def kdf(mat: str, salt: str, con: list[str], size: list[int], iter: int):
     tmp = mat + salt
     out = []
     for i in range(iter + 1):
@@ -44,7 +45,7 @@ print(kdf(pass1, salt1, context, size, 2))
 print(kdf(pass2, salt1, context, size, 2))
 """
 
-def bin2msg(bin: list) -> str:
+def bin2msg(bin: list):
     B = len(bin)
     b = B // 5
     q = B % 5
@@ -78,12 +79,11 @@ def isSym(s):
     alphabet = '_АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЫЬЭЮЯ'
     return 1 if s in alphabet else -1
 
-def msg2bin(msg) -> list:
+def msg2bin(msg):
     m = len(msg)
     i = 0
     f = 0
     tmp = []
-
     while i < m and isSym(msg[i]) == 1:
         p = msg[i]
         c = sym2bin(p)
@@ -109,7 +109,7 @@ def msg2bin(msg) -> list:
                     tmp.append(bit)
     return tmp
 
-def bin2msg(bin: list) -> str:
+def bin2msg(bin: list):
     B = len(bin)
     b = B // 5
     q = B % 5
@@ -252,9 +252,11 @@ def unpad_message(msg_in):
     T = check_padding(bins)
     T1 = T[1]
     if T[0] == 1:
-        pl = T1[1]
-        tmp = bins[0: M - pl]
+        padlength = T[1][1]
+        tmp = bins[0: M - padlength]
         out = bin2msg(tmp)
+    else:
+        out = msg_in
     return out
 
 """
@@ -303,7 +305,7 @@ def validate_packet(packet_in):
         f = 0
     return f
 
-def transnit(packet_in):
+def transmit(packet_in):
     data = packet_in[0]
     iv = packet_in[1]
     msg = packet_in[2]
@@ -334,7 +336,7 @@ def recieve(stream_in):
 print(ASSOCDATA_ARRAY[1])
 xtst = prepare_packet(ASSOCDATA_ARRAY[1], 'КОЛЕСО', INPUTS_ARRAY[1])
 print(xtst)
-ytst = recieve(transnit(xtst))
+ytst = recieve(transmit(xtst))
 print(ytst)
 print(validate_packet(ytst))
 """
@@ -418,6 +420,7 @@ def mac_CBC(msg_in, iv_in,key_in):
 
 F_TEST1 = mac_CBC(tst, iv1, keyset)
 print(F_TEST1)
+print()
 
 def combine(strset):
     out = ''
@@ -437,3 +440,171 @@ def blockxor(A_in, B_in):
 
 #print(blockxor('КОНЬ', 'А__Г'))
 
+def CCM_frw(packet, key, onlymac):
+    assdata = packet[0]
+    iv_in = packet[1]
+    msg_in = packet[2]
+    tmp = packet[3]
+    data = combine(assdata)
+    M = len(msg_in)
+    mac = mac_CBC(data + msg_in, iv_in, key)
+    if onlymac == 0:
+        msg = enc_CTR(msg_in + mac, iv_in, key)
+        MSG = msg[: M]
+        MAC = msg[M: M + 16]
+    else:
+        MSG = msg_in
+        MAC = mac
+    return [assdata, iv_in, MSG, MAC]
+
+def CCM_inv(packet, key, onlymac):
+    assdata = packet[0]
+    iv = packet[1]
+    msg = packet[2]
+    mac_in = packet[3]
+    data = combine(assdata)
+    M = len(msg)
+    if onlymac == 0:
+        msg = enc_CTR(msg + mac_in, iv,key)
+        MSG = msg[: M]
+        MAC = msg[M: M + 16]
+    else:
+        MSG = msg
+        MAC = mac_in
+    mac = mac_CBC(data + MSG, iv, key)
+    MAC = textxor(MAC, mac)
+    return [assdata, iv, MSG, MAC]
+
+AD = ASSOCDATA_ARRAY[1]
+AD.append('АБВГД')
+packet = [AD, 'БОБ_НЕМНОГО_ПЬЯН', INPUTS_ARRAY[0], '']
+Q_TEST1m = CCM_frw(packet, keyset, 0)
+print(Q_TEST1m[3])
+print(Q_TEST1m[2])
+R_TEST1m = CCM_inv(Q_TEST1m, keyset, 0)
+print(R_TEST1m[3])
+print(R_TEST1m[2])
+print()
+Q_TEST0m = CCM_frw(packet, keyset, 1)
+print(Q_TEST0m[3])
+print(Q_TEST0m[2])
+R_TEST0m = CCM_inv(Q_TEST0m, keyset, 1)
+print(R_TEST0m[3])
+print(R_TEST0m[2])
+
+def CCM_send(ass_data, msg_array, key, nonce):
+    mtype = ass_data[0]
+    sender = ass_data[1]
+    receiver = ass_data[2]
+    transmission = ass_data[3]
+    t1 = receiver + sender
+    t2 = mtype + transmission + '____'
+    t3 = add_txt(t2, nonce)
+    IV0 = c_block([t1, t2], 4) + c_block([t3, t2, t1], 4) + '________'
+    msg_counter = -1
+    keyset = produce_round_keys(key, 8, SET)
+    out = []
+    for i in range(len(msg_array)):
+        msg_sec = mtype
+        msg_counter = msg_counter + 1
+        IV1 = '________' + num2block(msg_counter) + '____'
+        IV = textxor(IV0, IV1)
+        tmp_packet = prepare_packet([msg_sec, sender, receiver, transmission], IV, msg_array[i])
+
+        if msg_sec == 'В_':
+            out_i = transmit(tmp_packet)
+            out.append(out_i)
+        if msg_sec == 'ВА':
+            sec_packet = CCM_frw(tmp_packet, keyset, 1)
+            out.append(transmit(sec_packet))
+        if msg_sec == 'ВБ':
+            sec_packet = CCM_frw(tmp_packet, keyset, 0)
+            out.append(transmit(sec_packet))
+    return out
+
+def CCM_recieve(ass_data, msg_array, key, nonce):
+    mtype = ass_data[0]
+    sender = ass_data[1]
+    receiver = ass_data[2]
+    transmission = ass_data[3]
+    t1 = receiver + sender
+    t2 = mtype + transmission + '____'
+    t3 = add_txt(t2, nonce)
+    IV0 = c_block([t1, t2], 4) + c_block([t3, t2, t1], 4) + '________'
+    msg_counter = -1
+    keyset = produce_round_keys(key, 8, SET)
+    out = []
+    last = -1
+
+    for i in range(len(msg_array)):
+        tmp_packet = recieve(msg_array[i])
+        rdata = tmp_packet[0]
+        x = tmp_packet[1][8: 12]
+        current = block2num(x)
+        if rdata[0] == 'ВБ':
+            rec_packet = CCM_inv(tmp_packet, keyset, 0)
+            rec_packet[2] = unpad_message(rec_packet[2])
+            if rec_packet[3] == '________________':
+                last = current
+                rec_packet[3] = 'OK'
+                """
+                if current > last:
+                    last = current
+                    rec_packet[3] = 'OK'"""
+            out.append(rec_packet)
+
+        elif rdata[0] == 'ВА':
+            rec_packet = CCM_inv(tmp_packet, keyset, 1)
+            rec_packet[2] = unpad_message(rec_packet[2])
+            if rec_packet[3] == '________________':
+                last = current
+                rec_packet[3] = 'OK'
+                """
+                if current > last:
+                    last = current
+                    rec_packet[3] = 'OK'"""
+            out.append(rec_packet)
+
+        elif rdata[0] == 'В_':
+            rec_packet = tmp_packet
+            rec_packet[2] = unpad_message(rec_packet[2])
+
+
+            if rec_packet[3] == '':
+                last = current
+                rec_packet[3] = 'N/A'
+                """
+                if current > last:
+                    last = current
+                    rec_packet[3] = 'OK'"""
+            out.append(rec_packet)
+        else:
+            out.append(tmp_packet)
+    return out
+
+
+print('-' * 80)
+AD = ASSOCDATA_ARRAY[3]
+MESSAGES = INPUTS_ARRAY
+CHANNEL = CCM_send(AD, MESSAGES, 'СЕАНСОВЫЙ_КЛЮЧИК', 'СЕМИХАТОВ_КВАНТЫ')
+for i in range(6):
+    print(len(CHANNEL[i]))
+
+CHANNEL[0][317] = ~ CHANNEL[0][317]
+CHANNEL[3][12] = ~ CHANNEL[3][12]
+
+print()
+print('=' * 100)
+print()
+TRANSMISSION = CCM_recieve(AD, CHANNEL, 'СЕАНСОВЫЙ_КЛЮЧИК', 'СЕМИХАТОВ_КВАНТЫ')
+print(TRANSMISSION)
+for i in range(len(TRANSMISSION)):
+    print()
+    print(TRANSMISSION[i][0])
+    print(TRANSMISSION[i][1])
+    print(TRANSMISSION[i][2])
+    if TRANSMISSION[i][2] == MESSAGES[i]:
+        print('True')
+    else:
+        print('False')
+    print(TRANSMISSION[i][3])
