@@ -123,9 +123,7 @@ def bin2msg(bin: list):
     if q > 0:
         for k in range(q):
             bit = bin[b * 5 + k]
-            print(bit, end='')
             out = out + str(bit)
-        print()
     return out
 
 """
@@ -522,62 +520,34 @@ def CCM_send(ass_data, msg_array, key, nonce):
             out.append(transmit(sec_packet))
     return out
 
-def CCM_recieve(ass_data, msg_array, key, nonce):
-    mtype = ass_data[0]
-    sender = ass_data[1]
-    receiver = ass_data[2]
-    transmission = ass_data[3]
-    t1 = receiver + sender
-    t2 = mtype + transmission + '____'
-    t3 = add_txt(t2, nonce)
-    IV0 = c_block([t1, t2], 4) + c_block([t3, t2, t1], 4) + '________'
-    msg_counter = -1
+def CCM_recieve(msg_array, key):
     keyset = produce_round_keys(key, 8, SET)
     out = []
-    last = -1
-
     for i in range(len(msg_array)):
         tmp_packet = recieve(msg_array[i])
         rdata = tmp_packet[0]
         x = tmp_packet[1][8: 12]
-        current = block2num(x)
         if rdata[0] == 'ВБ':
             rec_packet = CCM_inv(tmp_packet, keyset, 0)
             rec_packet[2] = unpad_message(rec_packet[2])
             if rec_packet[3] == '________________':
-                last = current
                 rec_packet[3] = 'OK'
-                """
-                if current > last:
-                    last = current
-                    rec_packet[3] = 'OK'"""
             out.append(rec_packet)
 
         elif rdata[0] == 'ВА':
             rec_packet = CCM_inv(tmp_packet, keyset, 1)
             rec_packet[2] = unpad_message(rec_packet[2])
             if rec_packet[3] == '________________':
-                last = current
                 rec_packet[3] = 'OK'
-                """
-                if current > last:
-                    last = current
-                    rec_packet[3] = 'OK'"""
             out.append(rec_packet)
 
         elif rdata[0] == 'В_':
             rec_packet = tmp_packet
             rec_packet[2] = unpad_message(rec_packet[2])
-
-
             if rec_packet[3] == '':
-                last = current
                 rec_packet[3] = 'N/A'
-                """
-                if current > last:
-                    last = current
-                    rec_packet[3] = 'OK'"""
             out.append(rec_packet)
+
         else:
             out.append(tmp_packet)
     return out
@@ -594,17 +564,27 @@ CHANNEL[0][317] = ~ CHANNEL[0][317]
 CHANNEL[3][12] = ~ CHANNEL[3][12]
 
 print()
-print('=' * 100)
+print('=' * 20, 'Проверка полученных сообщений', '=' * 80)
 print()
-TRANSMISSION = CCM_recieve(AD, CHANNEL, 'СЕАНСОВЫЙ_КЛЮЧИК', 'СЕМИХАТОВ_КВАНТЫ')
-print(TRANSMISSION)
+
+TRANSMISSION = CCM_recieve(CHANNEL, 'СЕАНСОВЫЙ_КЛЮЧИК')
+
 for i in range(len(TRANSMISSION)):
-    print()
-    print(TRANSMISSION[i][0])
-    print(TRANSMISSION[i][1])
-    print(TRANSMISSION[i][2])
+    print(f"СООБЩЕНИЕ  {i+1}")
+    if i == 0:
+        print('Один бит сломан во втором информационном блоке сообщения')
+    if i == 3:
+        print('Один бит сломан в заголовке (отправитель)')
+    print('Информация об отправке: ', TRANSMISSION[i][0])
+    print('Вектор инициализации (IV): ', TRANSMISSION[i][1])
+    print('Первые 50 символов сообщения: ', TRANSMISSION[i][2][: 50])
     if TRANSMISSION[i][2] == MESSAGES[i]:
-        print('True')
+        print('Оправленное и полученное сообщения совпадают')
     else:
-        print('False')
-    print(TRANSMISSION[i][3])
+        print('Оправленное и полученное сообщения не совпадают')
+    if TRANSMISSION[i][3] == 'OK':
+        print ('С процессом отправки-получения всё ОК')
+    else:
+        print('С процессом отправки-получения не всё ОК', '\n'
+              'Код аутентификации (MAC):', TRANSMISSION[i][3])
+    print()
