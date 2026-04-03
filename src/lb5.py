@@ -405,4 +405,35 @@ if i_test1 == tst:
 else:
     print('Не совпадают')
 
+def mac_CBC(msg_in, iv_in,key_in):
+    m = len(msg_in) // 16
+    out = ''
+    feedback = iv_in
+    for i in range(m):
+        inp = msg_in[i * 16: i * 16 + 16]
+        temp = textxor(feedback, inp)
+        feedback = frw_Feistel(temp, key_in, 6)
+        out = out + feedback
+    return feedback
+
+F_TEST1 = mac_CBC(tst, iv1, keyset)
+print(F_TEST1)
+
+def combine(strset):
+    out = ''
+    for i in range(len(strset)):
+        out = out + strset[i]
+    return out
+
+def blockxor(A_in, B_in):
+    A = dec2bin(block2num(A_in))
+    B = dec2bin(block2num(B_in))
+    C = []
+    for j in range(20):
+        C_j = (A[j] + B[j]) % 2
+        C.append(C_j)
+    c = bin2dec(C)
+    return num2block(c)
+
+#print(blockxor('КОНЬ', 'А__Г'))
 
